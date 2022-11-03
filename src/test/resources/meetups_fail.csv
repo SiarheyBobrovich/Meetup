@@ -1,0 +1,16 @@
+title;description;organization;place
+;some text;some organization;Olimp
+" ";some text;some organization;Olimp
+,;some text;some organization;Olimp
+-;some text;some organization;Olimp
+some title;" ";some organization;Olimp
+some title;-;some organization;Olimp
+some title;,;some organization;Olimp
+some title;some text;;Olimp
+some title;some text;" ";Olimp
+some title;some text;-;Olimp
+some title;some text;,;Olimp
+some title;some text;some organization;
+some title;some text;some organization;" "
+some title;some text;some organization;-
+some title;some text;some organization;,

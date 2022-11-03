@@ -1,6 +1,6 @@
 package by.modsen.meetup.dao;
 
-import by.modsen.meetup.LocalDateTimeUtil;
+import by.modsen.meetup.utils.LocalDateTimeUtil;
 import by.modsen.meetup.dao.api.MeetupDao;
 import by.modsen.meetup.entity.Meetup;
 import by.modsen.meetup.exceptions.MeetupNotFoundException;

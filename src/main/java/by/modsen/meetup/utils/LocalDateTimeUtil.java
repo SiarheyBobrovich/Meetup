@@ -1,4 +1,4 @@
-package by.modsen.meetup;
+package by.modsen.meetup.utils;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
