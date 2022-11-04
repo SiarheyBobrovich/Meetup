@@ -1,4 +1,4 @@
-package by.modsen.meetup.dto;
+package by.modsen.meetup.dto.request;
 
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import org.hibernate.validator.constraints.Length;
@@ -24,27 +24,27 @@ public class MeetupDto implements Serializable {
     }
 
     @NotEmpty(message = "must be not empty")
-    @Length(max = 100, message = "length must be 0~100 chars")
-    @Pattern(regexp = "^\\p{LD}[\\p{Punct}\\p{LD}\\s-]+", message = "title")
+    @Length(min = 2, max = 100, message = "length must be 2~100 chars")
+    @Pattern(regexp = "^\\p{LD}[\\p{Punct}\\p{LD}\\s-]+", message = "incorrect")
     public String getTitle() {
         return title;
     }
 
-    @Pattern(regexp = "^[\\S]+[\\p{Punct}\\p{LD}\\s]+")
+    @Pattern(regexp = "^\\p{LD}[\\p{Punct}\\p{LD}\\s]*")
     public String getDescription() {
         return description;
     }
 
     @NotEmpty(message = "must be not empty")
     @Length(max = 100, message = "length must be 0~100 chars")
-    @Pattern(regexp = "^\\p{LD}[\\p{LD}\\s]+", message = "must be only alphabetic")
+    @Pattern(regexp = "^\\p{LD}[\\p{LD}\\s]*", message = "must be only alphabetic or spaces")
     public String getOrganization() {
         return organization;
     }
 
     @NotEmpty(message = "must be not empty")
     @Length(max = 150, message = "length must be 0~100 chars")
-    @Pattern(regexp = "^\\p{LD}[\\p{LD}\\s]+", message = "must be only alphabetic")
+    @Pattern(regexp = "^\\p{LD}[\\p{LD}\\s]+", message = "must be only alphabetic or spaces")
     public String getPlace() {
         return place;
     }

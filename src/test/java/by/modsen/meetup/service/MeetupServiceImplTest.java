@@ -5,7 +5,7 @@ import by.modsen.meetup.converters.MeetupDtoToMeetupConverter;
 import by.modsen.meetup.utils.LocalDateTimeUtil;
 import by.modsen.meetup.MeetupApplication;
 import by.modsen.meetup.dao.api.MeetupDao;
-import by.modsen.meetup.dto.MeetupDto;
+import by.modsen.meetup.dto.request.MeetupDto;
 import by.modsen.meetup.entity.Meetup;
 import by.modsen.meetup.exceptions.IllegalIdException;
 import by.modsen.meetup.exceptions.MeetupNotFoundException;
@@ -82,7 +82,7 @@ class MeetupServiceImplTest {
     void save(String title, String description, String organization, String place) {
         Mockito.when(meetupDao.save(Mockito.any())).thenReturn(1L);
 
-        LocalDateTime time = LocalDateTimeUtil.truncatedToMicros(LocalDateTime.now());
+        LocalDateTime time = LocalDateTimeUtil.truncatedToMillis(LocalDateTime.now());
         MeetupDto meetupDto = new MeetupDto(title, description, organization, place, time);
 
         Long id = meetupService.save(meetupDto);
@@ -95,7 +95,7 @@ class MeetupServiceImplTest {
     void saveFail(String title, String description, String organization, String place) {
         Mockito.when(meetupDao.save(Mockito.any())).thenReturn(0L);
 
-        LocalDateTime time = LocalDateTimeUtil.truncatedToMicros(LocalDateTime.now());
+        LocalDateTime time = LocalDateTimeUtil.truncatedToMillis(LocalDateTime.now());
         MeetupDto meetupDto = new MeetupDto(title, description, organization, place, time);
 
         assertThrows(ValidationException.class, () -> meetupService.save(meetupDto));
@@ -122,7 +122,7 @@ class MeetupServiceImplTest {
     void update(String title, String description, String organization, String place) {
         Mockito.doNothing().when(meetupDao).update(Mockito.any());
 
-        LocalDateTime time = LocalDateTimeUtil.truncatedToMicros(LocalDateTime.now());
+        LocalDateTime time = LocalDateTimeUtil.truncatedToMillis(LocalDateTime.now());
         MeetupDto meetupDto = new MeetupDto(title, description, organization, place, time);
 
         assertDoesNotThrow(() -> meetupService.update(meetupDto, 1L, LocalDateTime.now()));
@@ -141,7 +141,7 @@ class MeetupServiceImplTest {
     void updateFailed(String title, String description, String organization, String place) {
         Mockito.doNothing().when(meetupDao).update(Mockito.any());
 
-        LocalDateTime time = LocalDateTimeUtil.truncatedToMicros(LocalDateTime.now());
+        LocalDateTime time = LocalDateTimeUtil.truncatedToMillis(LocalDateTime.now());
         MeetupDto meetupDto = new MeetupDto(title, description, organization, place, time);
         LocalDateTime dtUpdate = LocalDateTime.now();
 
@@ -153,7 +153,7 @@ class MeetupServiceImplTest {
     void updateFailedById(String title, String description, String organization, String place, Long id) {
         Mockito.doNothing().when(meetupDao).update(Mockito.any());
 
-        LocalDateTime time = LocalDateTimeUtil.truncatedToMicros(LocalDateTime.now());
+        LocalDateTime time = LocalDateTimeUtil.truncatedToMillis(LocalDateTime.now());
         MeetupDto meetupDto = new MeetupDto(title, description, organization, place, time);
         LocalDateTime dtUpdate = LocalDateTime.now();
 

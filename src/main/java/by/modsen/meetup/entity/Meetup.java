@@ -1,12 +1,13 @@
 package by.modsen.meetup.entity;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
 @Table(schema = "modsen", name = "meetups")
-public class Meetup {
+public class Meetup implements Serializable {
 
     private long id;
     private String title;
@@ -72,7 +73,7 @@ public class Meetup {
     }
 
     @Version
-    @Column(name = "dt_update", nullable = false)
+    @Column(name = "dt_update", nullable = false, columnDefinition = "timestamp(3) without time zone")
     public LocalDateTime getDtUpdate() {
         return dtUpdate;
     }

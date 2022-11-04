@@ -102,7 +102,7 @@ class MeetupDaoImplTest {
     @Test
     @Order(5)
     void update() {
-        LocalDateTime dtMeetup = LocalDateTimeUtil.truncatedToMicros(LocalDateTime.now());
+        LocalDateTime dtMeetup = LocalDateTimeUtil.truncatedToMillis(LocalDateTime.now());
 
         Meetup oldMeetup = dao.getById(1L);
         oldMeetup.setTitle("Updated title");
@@ -132,7 +132,7 @@ class MeetupDaoImplTest {
 
     @Test
     void updateFailed() {
-        LocalDateTime dtMeetup = LocalDateTimeUtil.truncatedToMicros(LocalDateTime.now());
+        LocalDateTime dtMeetup = LocalDateTimeUtil.truncatedToMillis(LocalDateTime.now());
 
         Meetup oldMeetup = dao.getById(1L);
         oldMeetup.setTitle("Updated title 2");
@@ -140,7 +140,7 @@ class MeetupDaoImplTest {
         oldMeetup.setOrganization("Updated organization 2");
         oldMeetup.setDescription("Updated description 2");
         oldMeetup.setDtMeetup(dtMeetup);
-        oldMeetup.setDtUpdate(LocalDateTimeUtil.truncatedToMicros(LocalDateTime.now()));
+        oldMeetup.setDtUpdate(LocalDateTimeUtil.truncatedToMillis(LocalDateTime.now()));
 
         assertThrows(JpaOptimisticLockingFailureException.class,() -> dao.update(oldMeetup));
     }

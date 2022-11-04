@@ -1,6 +1,6 @@
 package by.modsen.meetup.converters;
 
-import by.modsen.meetup.dto.MeetupDto;
+import by.modsen.meetup.dto.request.MeetupDto;
 import by.modsen.meetup.entity.Meetup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = MeetupDtoToMeetupConverter.class)
 @ActiveProfiles("test")
-class MeetupDtoToMeetupConverterTest {
+class MeetupDtoToResponceMeetupConverterTest {
 
     @Autowired
     Converter<MeetupDto, Meetup> converter;

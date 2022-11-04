@@ -1,6 +1,6 @@
 package by.modsen.meetup.service.api;
 
-import by.modsen.meetup.dto.MeetupDto;
+import by.modsen.meetup.dto.request.MeetupDto;
 import by.modsen.meetup.entity.Meetup;
 import by.modsen.meetup.exceptions.MeetupNotFoundException;
 

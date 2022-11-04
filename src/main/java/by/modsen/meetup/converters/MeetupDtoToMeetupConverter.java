@@ -1,6 +1,6 @@
 package by.modsen.meetup.converters;
 
-import by.modsen.meetup.dto.MeetupDto;
+import by.modsen.meetup.dto.request.MeetupDto;
 import by.modsen.meetup.entity.Meetup;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
