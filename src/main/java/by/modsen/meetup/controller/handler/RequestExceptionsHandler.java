@@ -17,7 +17,7 @@ import java.util.Map;
 @RestControllerAdvice
 public class RequestExceptionsHandler {
 
-    public static final Logger LOGGER = LogManager.getLogger(RequestExceptionsHandler.class);
+    public static final Logger LOGGER = LogManager.getLogger("RequestExceptionsHandler");
 
     @ExceptionHandler
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)

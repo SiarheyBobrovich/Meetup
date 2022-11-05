@@ -9,13 +9,19 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class RuntimeExceptionHandler {
-
-    public static final Logger LOGGER = LogManager.getLogger(RuntimeExceptionHandler.class);
+    public static final Logger LOGGER = LogManager.getLogger("RuntimeExceptionHandler");
 
     @ExceptionHandler
     @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
     public String handle(RuntimeException e) {
         LOGGER.warn(e.getMessage());
+        return "Please try again letter";
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
+    public String handle(Throwable e) {
+        LOGGER.fatal(e);
         return "Please try again letter";
     }
 }

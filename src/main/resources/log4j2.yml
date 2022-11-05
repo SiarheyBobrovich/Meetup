@@ -1,0 +1,68 @@
+Configuration:
+  name: default
+
+  Properties:
+    Property:
+      name: log-path
+      value: "logs"
+
+  Appenders:
+
+    Console:
+      name: Console_Appender
+      target: SYSTEM_OUT
+      PatternLayout:
+        pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
+
+    File:
+      - name: Runtime_File_Appender
+        fileName: ${log-path}/runtime/logfile.log
+        PatternLayout:
+          pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
+
+      - name: Request_File_Appender
+        fileName: ${log-path}/bad-request/logfile.log
+        PatternLayout:
+          pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
+
+    RollingFile:
+      - name: Rolling_Runtime_File_Appender
+        fileName: ${log-path}/runtime/rollingfile.log
+        filePattern: "${log-path}/runtime/archive/%d{yyyy-MM-dd-hh-mm}.log"
+        PatternLayout:
+          pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
+        Policies:
+          SizeBasedTriggeringPolicy:
+            size: 1 MB
+        DefaultRollOverStrategy:
+          max: 30
+
+      - name: Rolling_Request_File_Appender
+        fileName: ${log-path}/bad-request/rollingfile.log
+        filePattern: "${log-path}/bad-request/archive/%d{yyyy-MM-dd-hh-mm}.log"
+        PatternLayout:
+          pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
+        Policies:
+          SizeBasedTriggeringPolicy:
+            size: 5 MB
+        DefaultRollOverStrategy:
+          max: 30
+
+  Loggers:
+    Root:
+      level: info
+      AppenderRef:
+        - ref: Console_Appender
+
+    Logger:
+      - name: RuntimeExceptionHandler
+        level: warn
+        AppenderRef:
+          - ref: Runtime_File_Appender
+          - ref: Rolling_Runtime_File_Appender
+
+      - name: RequestExceptionsHandler
+        level: info
+        AppenderRef:
+          - ref: Request_File_Appender
+          - ref: Rolling_Request_File_Appender
