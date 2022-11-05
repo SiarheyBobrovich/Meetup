@@ -15,15 +15,15 @@ public interface MeetupController {
     @ResponseStatus(HttpStatus.OK)
     ResponseEntity<Set<ResponseMeetupDto>> getAllMeetups();
 
-    @GetMapping("/id/{id}")
+    @GetMapping(value = "/id/{id}", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
     ResponseEntity<ResponseMeetupDto> getMeetupById(@PathVariable Long id);
 
-    @PostMapping
+    @PostMapping(consumes = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
     Long postMeetup(@RequestBody MeetupDto dto);
 
-    @PutMapping("/id/{id}/version/{dt_update}")
+    @PutMapping(value = "/id/{id}/version/{dt_update}", consumes = "application/json")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void putMeetup(@RequestBody MeetupDto dto,
                    @PathVariable("id") Long id,

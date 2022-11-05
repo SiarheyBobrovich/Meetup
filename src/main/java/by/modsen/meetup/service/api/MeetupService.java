@@ -1,8 +1,7 @@
 package by.modsen.meetup.service.api;
 
 import by.modsen.meetup.dto.request.MeetupDto;
-import by.modsen.meetup.entity.Meetup;
-import by.modsen.meetup.exceptions.MeetupNotFoundException;
+import by.modsen.meetup.entity.Meetup;;
 
 import javax.persistence.OptimisticLockException;
 import javax.validation.Valid;
@@ -21,9 +20,8 @@ public interface MeetupService {
      * Find a meetup by id
      * @param id meetup id
      * @return If found -> meetup
-     * @throws MeetupNotFoundException If not found
      */
-    Meetup getById(@NotNull Long id) throws MeetupNotFoundException;
+    Meetup getById(@NotNull Long id);
 
     /**
      * Create new meetup

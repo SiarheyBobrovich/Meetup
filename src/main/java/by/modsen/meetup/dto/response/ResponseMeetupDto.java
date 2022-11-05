@@ -1,5 +1,7 @@
 package by.modsen.meetup.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -49,6 +51,7 @@ public class ResponseMeetupDto implements Serializable {
         return place;
     }
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     public LocalDateTime getDtMeetup() {
         return dtMeetup;
     }
@@ -80,7 +83,7 @@ public class ResponseMeetupDto implements Serializable {
 
     @Override
     public String toString() {
-        return "MeetupDto{" +
+        return "ResponseMeetupDto{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +

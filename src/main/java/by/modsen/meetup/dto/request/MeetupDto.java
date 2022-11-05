@@ -1,5 +1,6 @@
 package by.modsen.meetup.dto.request;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import org.hibernate.validator.constraints.Length;
 
@@ -8,6 +9,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@JsonDeserialize(builder = MeetupDto.Builder.class)
 public class MeetupDto implements Serializable {
     private final String title;
     private final String description;
@@ -85,7 +87,7 @@ public class MeetupDto implements Serializable {
         return new Builder();
     }
 
-    @JsonPOJOBuilder
+    @JsonPOJOBuilder(withPrefix = "")
     public static class Builder {
         private String title;
         private String description;
