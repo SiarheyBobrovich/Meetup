@@ -3,11 +3,12 @@ package by.modsen.meetup.dao;
 import by.modsen.meetup.utils.LocalDateTimeUtil;
 import by.modsen.meetup.dao.api.MeetupDao;
 import by.modsen.meetup.entity.Meetup;
-import by.modsen.meetup.exceptions.MeetupNotFoundException;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.orm.jpa.JpaOptimisticLockingFailureException;
@@ -96,7 +97,7 @@ class MeetupDaoImplTest {
     @Test
     @Order(4)
     void getById2() {
-        assertThrows(MeetupNotFoundException.class , () -> dao.getById(12L));
+        assertNull(dao.getById(12L));
     }
 
     @Test
@@ -131,6 +132,7 @@ class MeetupDaoImplTest {
     }
 
     @Test
+    @Order(7)
     void updateFailed() {
         LocalDateTime dtMeetup = LocalDateTimeUtil.truncatedToMillis(LocalDateTime.now());
 
@@ -143,6 +145,13 @@ class MeetupDaoImplTest {
         oldMeetup.setDtUpdate(LocalDateTimeUtil.truncatedToMillis(LocalDateTime.now()));
 
         assertThrows(JpaOptimisticLockingFailureException.class,() -> dao.update(oldMeetup));
+    }
+
+    @Order(8)
+    @ParameterizedTest
+    @ValueSource(longs = {Long.MIN_VALUE + 1, 1, Long.MAX_VALUE})
+    void delete(Long id) {
+        assertDoesNotThrow(() -> dao.delete(id));
     }
 
     private Meetup getMeetup() {

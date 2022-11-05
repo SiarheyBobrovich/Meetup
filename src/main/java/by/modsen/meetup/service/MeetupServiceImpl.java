@@ -4,7 +4,6 @@ import by.modsen.meetup.dao.api.MeetupDao;
 import by.modsen.meetup.dto.request.MeetupDto;
 import by.modsen.meetup.entity.Meetup;
 import by.modsen.meetup.exceptions.IllegalIdException;
-import by.modsen.meetup.exceptions.MeetupNotFoundException;
 import by.modsen.meetup.service.api.MeetupService;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
@@ -33,7 +32,7 @@ public class MeetupServiceImpl implements MeetupService {
     }
 
     @Override
-    public Meetup getById(Long id) throws MeetupNotFoundException {
+    public Meetup getById(Long id) {
         checkId(id);
         return meetupDao.getById(id);
     }
@@ -65,7 +64,7 @@ public class MeetupServiceImpl implements MeetupService {
 
     private void checkId(Long id) {
         if (Objects.isNull(id) || id < 1) {
-            throw new IllegalIdException();
+            throw new IllegalIdException(id);
         }
     }
 }

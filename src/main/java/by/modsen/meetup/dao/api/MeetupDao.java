@@ -1,7 +1,6 @@
 package by.modsen.meetup.dao.api;
 
 import by.modsen.meetup.entity.Meetup;
-import by.modsen.meetup.exceptions.MeetupNotFoundException;
 
 import javax.persistence.OptimisticLockException;
 import java.util.Set;
@@ -18,9 +17,8 @@ public interface MeetupDao {
      * Find meetup by id
      * @param id Meetup's id
      * @return If found -> Meetup
-     * @throws MeetupNotFoundException If not found
      */
-    Meetup getById(Long id) throws MeetupNotFoundException;
+    Meetup getById(Long id);
 
     /**
      * Create new meetup

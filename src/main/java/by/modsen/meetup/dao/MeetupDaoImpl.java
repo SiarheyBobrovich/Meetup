@@ -2,16 +2,15 @@ package by.modsen.meetup.dao;
 
 import by.modsen.meetup.dao.api.MeetupDao;
 import by.modsen.meetup.entity.Meetup;
-import by.modsen.meetup.exceptions.MeetupNotFoundException;
+import by.modsen.meetup.exceptions.MeetupOptimisticLockException;
 import by.modsen.meetup.mapper.MeetupMapper;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.*;
-import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Repository
@@ -38,17 +37,9 @@ public class MeetupDaoImpl implements MeetupDao {
     }
 
     @Override
-    public Meetup getById(Long id) throws MeetupNotFoundException {
+    public Meetup getById(Long id) {
         final EntityManager entityManager = beginTransaction();
-        final CriteriaQuery<Meetup> query = getSelectByIdQuery(id);
-        final Meetup meetup = entityManager.createQuery(query)
-                .getResultStream()
-                .findFirst()
-                .orElseThrow(() -> {
-                    commitAndClose(entityManager);
-                    throw new MeetupNotFoundException("there is no meetups with id: " + id);
-                });
-
+        Meetup meetup = entityManager.find(Meetup.class, id);
         commitAndClose(entityManager);
 
         return meetup;
@@ -68,6 +59,11 @@ public class MeetupDaoImpl implements MeetupDao {
         final EntityManager entityManager = beginTransaction();
         final Meetup currentMeetup = entityManager.find(Meetup.class, meetup.getId());
 
+        if (Objects.isNull(currentMeetup)) {
+            commitAndClose(entityManager);
+            return;
+        }
+
         checkDtUpdate(currentMeetup, meetup, entityManager);
         mapper.merge(currentMeetup, meetup);
         commitAndClose(entityManager);
@@ -76,13 +72,17 @@ public class MeetupDaoImpl implements MeetupDao {
     @Override
     public void delete(Long id) {
         final EntityManager entityManager = beginTransaction();
-        final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        final CriteriaQuery<Meetup> query = criteriaBuilder.createQuery(Meetup.class);
-        final Root<Meetup> from = query.from(Meetup.class);
+        final Meetup currentMeetup = tryToFind(id);
 
-        query.select(from).where(criteriaBuilder.equal(from.get("id"), id));
-        entityManager.createQuery(query).executeUpdate();
+        if (!Objects.isNull(currentMeetup)) {
+            entityManager.remove(currentMeetup);
+        }
+
         commitAndClose(entityManager);
+    }
+
+    private Meetup tryToFind(Long id) {
+            return getById(id);
     }
 
     /**
@@ -121,24 +121,8 @@ public class MeetupDaoImpl implements MeetupDao {
         if (!m1.getDtUpdate().equals(m2.getDtUpdate())) {
             commitAndClose(manager);
 
-            throw new OptimisticLockException();
+            throw new MeetupOptimisticLockException("old version");
         }
-    }
-
-    /**
-     * Create "SELECT * FROM meetups WHERE id = ?"
-     * @param id Meetup id
-     * @return created query
-     */
-    private CriteriaQuery<Meetup> getSelectByIdQuery(Long id) {
-        final CriteriaBuilder criteriaBuilder = factory.getCriteriaBuilder();
-        final CriteriaQuery<Meetup> query = criteriaBuilder.createQuery(Meetup.class);
-        final Root<Meetup> root = query.from(Meetup.class);
-
-        query.select(root)
-                .where(criteriaBuilder.equal(root.get("id"), id));
-
-        return query;
     }
 
     /**

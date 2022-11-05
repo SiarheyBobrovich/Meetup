@@ -8,7 +8,6 @@ import by.modsen.meetup.dao.api.MeetupDao;
 import by.modsen.meetup.dto.request.MeetupDto;
 import by.modsen.meetup.entity.Meetup;
 import by.modsen.meetup.exceptions.IllegalIdException;
-import by.modsen.meetup.exceptions.MeetupNotFoundException;
 import by.modsen.meetup.service.api.MeetupService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -67,13 +66,13 @@ class MeetupServiceImplTest {
     @ValueSource(longs = {Long.MIN_VALUE, -1, 0})
     void getByIdFailed(Long id) {
 
-        Mockito.when(meetupDao.getById(id)).thenThrow(MeetupNotFoundException.class);
+        Mockito.when(meetupDao.getById(id)).thenReturn(null);
         assertThrows(IllegalIdException.class, () -> meetupService.getById(id));
     }
 
     @Test
     void getByIdFailedByNull() {
-        Mockito.when(meetupDao.getById(null)).thenThrow(MeetupNotFoundException.class);
+        Mockito.when(meetupDao.getById(null)).thenThrow(NullPointerException.class);
         assertThrows(ValidationException.class, () -> meetupService.getById(null));
     }
 
