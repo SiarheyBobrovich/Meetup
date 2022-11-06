@@ -6,8 +6,8 @@ spring:
         password: 172143
     hibernate:
         format_sql: true
-        show_sql: true
+        show_sql: false
         hbm2ddl:
             auto: create-drop
 server:
-    port: 80
+    port: 8081

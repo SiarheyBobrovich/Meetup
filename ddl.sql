@@ -1,13 +1,25 @@
-CREATE SEQUENCE IF NOT EXISTS modsen.meetup_id_seq
+CREATE DATABASE IF NOT EXISTS modsen
+    WITH
+    OWNER = postgres
+    ENCODING = 'UTF8'
+    TABLESPACE = pg_default
+    CONNECTION LIMIT = -1;
+
+\c modsen
+
+CREATE SCHEMA IF NOT EXISTS example
+    AUTHORIZATION postgres;
+
+CREATE SEQUENCE IF NOT EXISTS example.meetup_id_seq
     INCREMENT 1
     START 1
     MINVALUE 1
     MAXVALUE 9223372036854775807
     CACHE 1;
 
-CREATE TABLE IF NOT EXISTS modsen.meetups
+CREATE TABLE IF NOT EXISTS example.meetups
 (
-    id bigint NOT NULL DEFAULT  nextval('modsen.meetup_id_seq'),
+    id bigint NOT NULL DEFAULT  nextval('example.meetup_id_seq'),
     topic character varying(100) NOT NULL,
     description text,
     dt_meetup timestamp without time zone NOT NULL,
@@ -19,8 +31,8 @@ CREATE TABLE IF NOT EXISTS modsen.meetups
 
 TABLESPACE pg_default;
 
-ALTER TABLE IF EXISTS modsen.meetups
+ALTER TABLE IF EXISTS example.meetups
         OWNER to postgres;
 
-ALTER SEQUENCE modsen.meetup_id_seq
-    OWNED BY modsen.meetups.id;
+ALTER SEQUENCE example.meetup_id_seq
+    OWNED BY example.meetups.id;

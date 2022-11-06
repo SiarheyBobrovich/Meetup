@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(schema = "modsen", name = "meetups")
+@Table(schema = "example", name = "meetups")
 public class Meetup implements Serializable {
 
     private long id;
