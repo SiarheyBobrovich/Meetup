@@ -100,12 +100,12 @@ class MeetupControllerImplTest {
                 .stream()
                 .filter(m -> m.getId() == id)
                 .findFirst()
-                .get();
+                .orElseThrow();
     }
 
     private MeetupDto getRequestDto(Meetup meetup) {
         return MeetupDto.builder()
-                .title(meetup.getTitle())
+                .topic(meetup.getTopic())
                 .description(meetup.getDescription())
                 .organization(meetup.getOrganization())
                 .place(meetup.getPlace())
@@ -118,7 +118,7 @@ class MeetupControllerImplTest {
         Meetup meetup2 = new Meetup();
 
         meetup1.setId(1);
-        meetup1.setTitle("First");
+        meetup1.setTopic("First");
         meetup1.setDescription("Fa");
         meetup1.setOrganization("F");
         meetup1.setPlace("First hotel");
@@ -126,7 +126,7 @@ class MeetupControllerImplTest {
         meetup1.setDtUpdate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS));
 
         meetup2.setId(2);
-        meetup2.setTitle("Second");
+        meetup2.setTopic("Second");
         meetup2.setDescription("Second description");
         meetup2.setOrganization("S");
         meetup2.setPlace("Second hotel");

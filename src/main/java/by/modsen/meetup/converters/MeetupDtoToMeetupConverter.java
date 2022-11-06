@@ -12,7 +12,7 @@ public class MeetupDtoToMeetupConverter implements Converter<MeetupDto, Meetup> 
     public Meetup convert(MeetupDto source) {
         Meetup meetup = new Meetup();
 
-        meetup.setTitle(source.getTitle());
+        meetup.setTopic(source.getTopic());
         meetup.setDescription(source.getDescription());
         meetup.setOrganization(source.getOrganization());
         meetup.setPlace(source.getPlace());

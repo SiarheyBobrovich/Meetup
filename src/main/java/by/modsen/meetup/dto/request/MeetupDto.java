@@ -11,14 +11,14 @@ import java.util.Objects;
 
 @JsonDeserialize(builder = MeetupDto.Builder.class)
 public class MeetupDto implements Serializable {
-    private final String title;
+    private final String topic;
     private final String description;
     private final String organization;
     private final String place;
     private final LocalDateTime dtMeetup;
 
-    public MeetupDto(String title, String description, String organization, String place, LocalDateTime dtMeetup) {
-        this.title = title;
+    public MeetupDto(String topic, String description, String organization, String place, LocalDateTime dtMeetup) {
+        this.topic = topic;
         this.description = description;
         this.organization = organization;
         this.place = place;
@@ -28,8 +28,8 @@ public class MeetupDto implements Serializable {
     @NotEmpty(message = "must be not empty")
     @Length(min = 2, max = 100, message = "length must be 2~100 chars")
     @Pattern(regexp = "^\\p{LD}[\\p{Punct}\\p{LD}\\s-]+", message = "incorrect")
-    public String getTitle() {
-        return title;
+    public String getTopic() {
+        return topic;
     }
 
     @Pattern(regexp = "^\\p{LD}[\\p{Punct}\\p{LD}\\s]*")
@@ -61,7 +61,7 @@ public class MeetupDto implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MeetupDto entity = (MeetupDto) o;
-        return Objects.equals(this.title, entity.title) &&
+        return Objects.equals(this.topic, entity.topic) &&
                 Objects.equals(this.description, entity.description) &&
                 Objects.equals(this.organization, entity.organization) &&
                 Objects.equals(this.place, entity.place) &&
@@ -70,17 +70,18 @@ public class MeetupDto implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, description, organization, place, dtMeetup);
+        return Objects.hash(topic, description, organization, place, dtMeetup);
     }
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "(" +
-                "title = " + title + ", " +
-                "description = " + description + ", " +
-                "organization = " + organization + ", " +
-                "place = " + place + ", " +
-                "dtMeetup = " + dtMeetup + ")";
+        return "MeetupDto{" +
+                "topic='" + topic + '\'' +
+                ", description='" + description + '\'' +
+                ", organization='" + organization + '\'' +
+                ", place='" + place + '\'' +
+                ", dtMeetup=" + dtMeetup +
+                '}';
     }
 
     public static Builder builder() {
@@ -89,7 +90,7 @@ public class MeetupDto implements Serializable {
 
     @JsonPOJOBuilder(withPrefix = "")
     public static class Builder {
-        private String title;
+        private String topic;
         private String description;
         private String organization;
         private String place;
@@ -98,8 +99,8 @@ public class MeetupDto implements Serializable {
         private Builder() {
         }
 
-        public Builder title(String title) {
-            this.title = title;
+        public Builder topic(String topic) {
+            this.topic = topic;
             return this;
         }
 
@@ -125,7 +126,7 @@ public class MeetupDto implements Serializable {
 
         public MeetupDto build() {
             return new MeetupDto(
-                    title,
+                    topic,
                     description,
                     organization,
                     place,

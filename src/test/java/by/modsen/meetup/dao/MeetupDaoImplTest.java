@@ -36,7 +36,7 @@ class MeetupDaoImplTest {
     @Test
     void saveFailed1() {
         Meetup meetup = getMeetup();
-        meetup.setTitle(null);
+        meetup.setTopic(null);
 
         assertThrows(RuntimeException.class, () -> dao.save(meetup));
     }
@@ -73,7 +73,7 @@ class MeetupDaoImplTest {
         assertEquals(1, all.size());
         all.forEach( meetup -> {
             assertEquals(1, meetup.getId());
-            assertEquals("Concert", meetup.getTitle());
+            assertEquals("Concert", meetup.getTopic());
             assertNull(meetup.getDescription());
             assertEquals("Stars", meetup.getOrganization());
             assertEquals("Independent square", meetup.getPlace());
@@ -87,7 +87,7 @@ class MeetupDaoImplTest {
         Meetup meetup = dao.getById(1L);
 
         assertEquals(1, meetup.getId());
-        assertEquals("Concert", meetup.getTitle());
+        assertEquals("Concert", meetup.getTopic());
         assertNull(meetup.getDescription());
         assertEquals("Stars", meetup.getOrganization());
         assertEquals("Independent square", meetup.getPlace());
@@ -106,7 +106,7 @@ class MeetupDaoImplTest {
         LocalDateTime dtMeetup = LocalDateTimeUtil.truncatedToMillis(LocalDateTime.now());
 
         Meetup oldMeetup = dao.getById(1L);
-        oldMeetup.setTitle("Updated title");
+        oldMeetup.setTopic("Updated title");
         oldMeetup.setDescription("Updated description");
         oldMeetup.setOrganization("Updated organization");
         oldMeetup.setPlace("Updated place");
@@ -124,7 +124,7 @@ class MeetupDaoImplTest {
         Meetup meetup = dao.getById(1L);
 
         assertEquals(1, meetup.getId());
-        assertEquals("Updated title", meetup.getTitle());
+        assertEquals("Updated title", meetup.getTopic());
         assertEquals("Updated description", meetup.getDescription());
         assertEquals("Updated organization", meetup.getOrganization());
         assertEquals("Updated place", meetup.getPlace());
@@ -137,7 +137,7 @@ class MeetupDaoImplTest {
         LocalDateTime dtMeetup = LocalDateTimeUtil.truncatedToMillis(LocalDateTime.now());
 
         Meetup oldMeetup = dao.getById(1L);
-        oldMeetup.setTitle("Updated title 2");
+        oldMeetup.setTopic("Updated title 2");
         oldMeetup.setPlace("Updated place 2");
         oldMeetup.setOrganization("Updated organization 2");
         oldMeetup.setDescription("Updated description 2");
@@ -157,7 +157,7 @@ class MeetupDaoImplTest {
     private Meetup getMeetup() {
         Meetup meetup = new Meetup();
 
-        meetup.setTitle("Concert");
+        meetup.setTopic("Concert");
         //meetup.setDescription("First meetup");
         meetup.setOrganization("Stars");
         meetup.setPlace("Independent square");

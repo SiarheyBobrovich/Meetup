@@ -1,9 +1,9 @@
 package by.modsen.meetup.dao;
 
 import by.modsen.meetup.dao.api.MeetupDao;
+import by.modsen.meetup.dao.mapper.api.ModelMapper;
 import by.modsen.meetup.entity.Meetup;
 import by.modsen.meetup.exceptions.MeetupOptimisticLockException;
-import by.modsen.meetup.mapper.MeetupMapper;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.*;
@@ -17,9 +17,9 @@ import java.util.Set;
 public class MeetupDaoImpl implements MeetupDao {
 
     private final EntityManagerFactory factory;
-    private final MeetupMapper mapper;
+    private final ModelMapper<Meetup> mapper;
 
-    public MeetupDaoImpl(EntityManagerFactory factory, MeetupMapper mapper) {
+    public MeetupDaoImpl(EntityManagerFactory factory, ModelMapper<Meetup> mapper) {
         this.factory = factory;
         this.mapper = mapper;
     }
@@ -65,7 +65,7 @@ public class MeetupDaoImpl implements MeetupDao {
         }
 
         checkDtUpdate(currentMeetup, meetup, entityManager);
-        mapper.merge(currentMeetup, meetup);
+        mapper.rebase(currentMeetup, meetup);
         commitAndClose(entityManager);
     }
 

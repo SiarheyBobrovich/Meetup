@@ -8,7 +8,7 @@ import java.util.Objects;
 
 public class ResponseMeetupDto implements Serializable {
     private final long id;
-    private final String title;
+    private final String topic;
     private final String description;
     private final String organization;
     private final String place;
@@ -16,14 +16,14 @@ public class ResponseMeetupDto implements Serializable {
     private final long version;
 
     public ResponseMeetupDto(long id,
-                             String title,
+                             String topic,
                              String description,
                              String organization,
                              String place,
                              LocalDateTime dtMeetup,
                              long version) {
         this.id = id;
-        this.title = title;
+        this.topic = topic;
         this.description = description;
         this.organization = organization;
         this.place = place;
@@ -35,8 +35,8 @@ public class ResponseMeetupDto implements Serializable {
         return id;
     }
 
-    public String getTitle() {
-        return title;
+    public String getTopic() {
+        return topic;
     }
 
     public String getDescription() {
@@ -68,24 +68,24 @@ public class ResponseMeetupDto implements Serializable {
         ResponseMeetupDto responseMeetupDto = (ResponseMeetupDto) o;
 
         return id == responseMeetupDto.id &&
-                version == responseMeetupDto.version
-                && Objects.equals(title, responseMeetupDto.title)
-                && Objects.equals(description, responseMeetupDto.description)
-                && Objects.equals(organization, responseMeetupDto.organization)
-                && Objects.equals(place, responseMeetupDto.place)
-                && Objects.equals(dtMeetup, responseMeetupDto.dtMeetup);
+                version == responseMeetupDto.version &&
+                Objects.equals(topic, responseMeetupDto.topic) &&
+                Objects.equals(description, responseMeetupDto.description) &&
+                Objects.equals(organization, responseMeetupDto .organization) &&
+                Objects.equals(place, responseMeetupDto.place) &&
+                Objects.equals(dtMeetup, responseMeetupDto.dtMeetup);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, description, organization, place, dtMeetup, version);
+        return Objects.hash(id, topic, description, organization, place, dtMeetup, version);
     }
 
     @Override
     public String toString() {
         return "ResponseMeetupDto{" +
                 "id=" + id +
-                ", title='" + title + '\'' +
+                ", topic='" + topic + '\'' +
                 ", description='" + description + '\'' +
                 ", organization='" + organization + '\'' +
                 ", place='" + place + '\'' +

@@ -8,12 +8,12 @@ CREATE SEQUENCE IF NOT EXISTS modsen.meetup_id_seq
 CREATE TABLE IF NOT EXISTS modsen.meetups
 (
     id bigint NOT NULL DEFAULT  nextval('modsen.meetup_id_seq'),
+    topic character varying(100) NOT NULL,
     description text,
     dt_meetup timestamp without time zone NOT NULL,
     dt_update timestamp(3) without time zone NOT NULL,
     organization character varying(100) NOT NULL,
     place character varying(150) NOT NULL,
-    title character varying(100) NOT NULL,
     CONSTRAINT meetups_pkey PRIMARY KEY (id)
 )
 

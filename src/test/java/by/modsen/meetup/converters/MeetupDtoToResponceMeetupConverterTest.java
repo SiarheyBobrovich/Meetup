@@ -28,7 +28,7 @@ class MeetupDtoToResponceMeetupConverterTest {
         LocalDateTime dtMeetup = LocalDateTime.now();
 
         Meetup meetup = converter.convert(MeetupDto.builder()
-                .title(title)
+                .topic(title)
                 .description(description)
                 .organization(organization)
                 .place(place)
@@ -39,7 +39,7 @@ class MeetupDtoToResponceMeetupConverterTest {
         assertNotNull(meetup);
         assertNull(meetup.getDtUpdate());
         assertEquals(0, meetup.getId());
-        assertEquals(title, meetup.getTitle());
+        assertEquals(title, meetup.getTopic());
         assertEquals(description, meetup.getDescription());
         assertEquals(organization, meetup.getOrganization());
         assertEquals(place, meetup.getPlace());

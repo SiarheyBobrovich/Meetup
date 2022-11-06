@@ -10,8 +10,8 @@ import java.util.Objects;
 @JsonDeserialize(builder = TestResponseMeetupDto.Builder.class)
 class TestResponseMeetupDto  extends ResponseMeetupDto{
 
-    public TestResponseMeetupDto(long id, String title, String description, String organization, String place, LocalDateTime dtMeetup, Long version) {
-        super(id, title, description, organization, place, dtMeetup, version);
+    public TestResponseMeetupDto(long id, String topic, String description, String organization, String place, LocalDateTime dtMeetup, Long version) {
+        super(id, topic, description, organization, place, dtMeetup, version);
     }
 
     @Override
@@ -22,7 +22,7 @@ class TestResponseMeetupDto  extends ResponseMeetupDto{
         TestResponseMeetupDto responseMeetupDto = (TestResponseMeetupDto) o;
 
         return getId() == responseMeetupDto.getId()
-                && Objects.equals(getTitle(), responseMeetupDto.getTitle())
+                && Objects.equals(getTopic(), responseMeetupDto.getTopic())
                 && Objects.equals(getDescription(), responseMeetupDto.getDescription())
                 && Objects.equals(getOrganization(), responseMeetupDto.getOrganization())
                 && Objects.equals(getPlace(), responseMeetupDto.getPlace())
@@ -31,7 +31,7 @@ class TestResponseMeetupDto  extends ResponseMeetupDto{
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getTitle(), getDescription(), getOrganization(), getPlace(), getDtMeetup());
+        return Objects.hash(getId(), getTopic(), getDescription(), getOrganization(), getPlace(), getDtMeetup());
     }
 
     public static Builder builder() {
@@ -41,7 +41,7 @@ class TestResponseMeetupDto  extends ResponseMeetupDto{
     @JsonPOJOBuilder(withPrefix = "set")
     static class Builder {
         private long id;
-        private String title;
+        private String topic;
         private String description;
         private String organization;
         private String place;
@@ -55,8 +55,8 @@ class TestResponseMeetupDto  extends ResponseMeetupDto{
             this.id = id;
         }
 
-        public void setTitle(String title) {
-            this.title = title;
+        public void setTopic(String topic) {
+            this.topic = topic;
         }
 
         public void setDescription(String description) {
@@ -80,7 +80,7 @@ class TestResponseMeetupDto  extends ResponseMeetupDto{
         }
 
         public TestResponseMeetupDto build() {
-            return new TestResponseMeetupDto(id, title, description, organization, place, dtMeetup, version);
+            return new TestResponseMeetupDto(id, topic, description, organization, place, dtMeetup, version);
         }
     }
 }

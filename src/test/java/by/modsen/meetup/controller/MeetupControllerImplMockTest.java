@@ -2,7 +2,6 @@ package by.modsen.meetup.controller;
 
 import by.modsen.meetup.dto.request.MeetupDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -43,7 +42,7 @@ class MeetupControllerImplMockTest {
     @ParameterizedTest
     @CsvFileSource(resources = "/meetups.csv", delimiter = ';')
     void postMeetup(String title, String description, String organization, String place) throws Exception {
-        MeetupDto meetupDto = MeetupDto.builder().title(title).description(description)
+        MeetupDto meetupDto = MeetupDto.builder().topic(title).description(description)
                 .organization(organization).place(place).dtMeetup(DT_MEETUP).build();
         String content = mapper.writeValueAsString(meetupDto);
 
@@ -83,7 +82,10 @@ class MeetupControllerImplMockTest {
         String contentAsString = getContentAsString(request);
 
         TestResponseMeetupDto actual = mapper.readValue(contentAsString, TestResponseMeetupDto.class);
-        TestResponseMeetupDto expectedDto = getExpectedDto().stream().filter(m -> m.getId() == id).findFirst().get();
+        TestResponseMeetupDto expectedDto = getExpectedDto().stream()
+                .filter(m -> m.getId() == id)
+                .findFirst()
+                .orElseThrow();
         assertEquals(expectedDto, actual);
     }
 
@@ -97,7 +99,7 @@ class MeetupControllerImplMockTest {
         long version = actual.getVersion();
         TestResponseMeetupDto dto = getExpectedDto().get(Math.toIntExact(id - 1));
         MeetupDto requestDto = MeetupDto.builder()
-                .title(dto.getTitle())
+                .topic(dto.getTopic())
                 .description(dto.getDescription())
                 .organization(dto.getOrganization())
                 .place(dto.getPlace())

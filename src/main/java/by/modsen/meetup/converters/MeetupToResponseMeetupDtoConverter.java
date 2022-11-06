@@ -12,7 +12,7 @@ public class MeetupToResponseMeetupDtoConverter implements Converter<Meetup, Res
     @Override
     public ResponseMeetupDto convert(Meetup source) {
         return new ResponseMeetupDto(source.getId(),
-                source.getTitle(),
+                source.getTopic(),
                 source.getDescription(),
                 source.getOrganization(),
                 source.getPlace(),

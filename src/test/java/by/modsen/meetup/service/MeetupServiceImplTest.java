@@ -182,7 +182,7 @@ class MeetupServiceImplTest {
     private Meetup getMeetup() {
         Meetup meetup = new Meetup();
 
-        meetup.setTitle("First");
+        meetup.setTopic("First");
         meetup.setDescription("desc");
         meetup.setOrganization("organization");
         meetup.setPlace("place");
