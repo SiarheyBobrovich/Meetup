@@ -1,0 +1,32 @@
+version: '3.5'
+services:
+  db:
+    build: postgresql
+    image: meetup_postgresql:1.0.0
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 172143
+    volumes:
+      - /docker-entrypoint-initdb.d
+    networks:
+      - meetup_ntwrk
+
+  meetup-service:
+    build:
+      dockerfile: Dockerfile
+    image: meetup-service:1.0.0
+    networks:
+      - meetup_ntwrk
+
+  proxy:
+    build: proxy
+    image: meetup_proxy:1.0.0
+    ports:
+      - "80:80"
+    networks:
+      - meetup_ntwrk
+
+networks:
+  meetup_ntwrk:
+    name: meetup_ntwrk
