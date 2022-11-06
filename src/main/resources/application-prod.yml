@@ -1,6 +1,7 @@
 spring:
     datasource:
-        url: jdbc:postgresql://db:5432/modsen
+        url: jdbc:postgresql://db:5432/modsen?currentSchema=${spring.datasource.schema}
+        schema: example
         username: postgres
         password: 172143
     hibernate:

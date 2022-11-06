@@ -1,7 +1,8 @@
 spring:
     datasource:
         driver-class-name: org.postgresql.Driver
-        url: jdbc:postgresql://localhost:5432/test
+        url: jdbc:postgresql://localhost:5432/test?currentSchema=${spring.datasource.schema}
+        schema: example
         username: postgres
         password: 172143
     hibernate:
