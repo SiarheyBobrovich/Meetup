@@ -1,6 +1,6 @@
 package by.modsen.meetup.dao;
 
-import by.modsen.meetup.dao.api.FilterMeetupDao;
+import by.modsen.meetup.dao.api.FilteredMeetupDao;
 import by.modsen.meetup.dao.filter.FilterImpl;
 import by.modsen.meetup.dao.filter.SortField;
 import by.modsen.meetup.dao.filter.api.Filter;
@@ -8,6 +8,7 @@ import by.modsen.meetup.entity.Meetup;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.io.IOException;
@@ -23,11 +24,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class FilteredMeetupDaoImplTest {
 
     @Autowired
-    private FilterMeetupDao meetupDao;
+    private FilteredMeetupDao meetupDao;
 
     @Test
     @Order(1)
@@ -49,7 +51,7 @@ class FilteredMeetupDaoImplTest {
     void getFilteredMeetups() {
         Filter f = FilterImpl.of("f", null, null, null);
 
-        List<Meetup> filteredMeetups = meetupDao.getFilteredMeetups(f);
+        List<Meetup> filteredMeetups = meetupDao.getAll(f);
         assertEquals("first", filteredMeetups.get(0).getTopic());
         assertEquals(1, filteredMeetups.size());
     }
@@ -58,7 +60,7 @@ class FilteredMeetupDaoImplTest {
     void getFilteredMeetups2() {
         Filter f = FilterImpl.of("z", null, null, null);
 
-        List<Meetup> filteredMeetups = meetupDao.getFilteredMeetups(f);
+        List<Meetup> filteredMeetups = meetupDao.getAll(f);
         assertEquals(0, filteredMeetups.size());
     }
 
@@ -66,7 +68,7 @@ class FilteredMeetupDaoImplTest {
     void getFilteredMeetups3() {
         Filter f = FilterImpl.of(null, "r", null, null);
 
-        List<Meetup> filteredMeetups = meetupDao.getFilteredMeetups(f);
+        List<Meetup> filteredMeetups = meetupDao.getAll(f);
         assertEquals(2, filteredMeetups.size());
     }
 
@@ -74,7 +76,7 @@ class FilteredMeetupDaoImplTest {
     void getFilteredMeetupsDtMeetup() {
         Filter f = FilterImpl.of(null, null, LocalDate.ofEpochDay(3333), null);
 
-        List<Meetup> filteredMeetups = meetupDao.getFilteredMeetups(f);
+        List<Meetup> filteredMeetups = meetupDao.getAll(f);
         assertEquals(1, filteredMeetups.size());
         assertEquals("third", filteredMeetups.get(0).getTopic());
     }
@@ -83,7 +85,7 @@ class FilteredMeetupDaoImplTest {
     void getFilteredMeetupsSort() {
         Filter f = FilterImpl.of(null, null, null, SortField.TOPIC);
 
-        List<Meetup> filteredMeetups = meetupDao.getFilteredMeetups(f);
+        List<Meetup> filteredMeetups = meetupDao.getAll(f);
         assertEquals(3, filteredMeetups.size());
         assertEquals("first", filteredMeetups.get(0).getTopic());
         assertEquals("second", filteredMeetups.get(1).getTopic());

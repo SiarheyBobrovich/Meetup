@@ -1,6 +1,6 @@
 package by.modsen.meetup.dao;
 
-import by.modsen.meetup.dao.api.FilterMeetupDao;
+import by.modsen.meetup.dao.api.FilteredMeetupDao;
 import by.modsen.meetup.dao.filter.api.Filter;
 import by.modsen.meetup.dao.mapper.api.ModelMapper;
 import by.modsen.meetup.entity.Meetup;
@@ -9,6 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,14 +18,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class FilteredMeetupDaoImpl extends MeetupDaoImpl implements FilterMeetupDao {
+public class FilteredMeetupDaoImpl extends MeetupDaoImpl implements FilteredMeetupDao {
 
     public FilteredMeetupDaoImpl(EntityManagerFactory factory, ModelMapper<Meetup> mapper) {
         super(factory, mapper);
     }
 
     @Override
-    public List<Meetup> getFilteredMeetups(Filter filter) {
+    public List<Meetup> getAll(Filter filter) {
         if (Objects.isNull(filter)) {
             return new ArrayList<>(getAll());
         }
@@ -41,8 +42,9 @@ public class FilteredMeetupDaoImpl extends MeetupDaoImpl implements FilterMeetup
     }
 
     private CriteriaQuery<Meetup> getFilteredQuery(CriteriaBuilder cb , Filter filter) {
-        CriteriaQuery<Meetup> query = cb.createQuery(Meetup.class);
-        Root<Meetup> root = query.from(Meetup.class);
+        final CriteriaQuery<Meetup> query = cb.createQuery(Meetup.class);
+        final Root<Meetup> root = query.from(Meetup.class);
+        List<Predicate> predicates = new ArrayList<>();
 
         query.select(root);
 
@@ -52,23 +54,26 @@ public class FilteredMeetupDaoImpl extends MeetupDaoImpl implements FilterMeetup
         String sort = filter.getSort();
 
         if (!Objects.isNull(topic)) {
-            query.where(cb.like(root.get("topic"), "%" + topic + "%"));
+            predicates.add(cb.like(root.get("topic"), "%" + topic + "%"));
         }
 
         if (!Objects.isNull(organization)) {
-            query.where(cb.like(root.get("organization"), "%" + organization + "%"));
+            predicates.add(cb.like(root.get("organization"), "%" + organization + "%"));
         }
 
         if (!Objects.isNull(date)) {
             LocalDateTime min = LocalDateTime.of(date, LocalTime.MIN);
             LocalDateTime max = LocalDateTime.of(date, LocalTime.MAX);
-            query.where(cb.between(root.get("dtMeetup"), min, max));
+            predicates.add(cb.between(root.get("dtMeetup"), min, max));
         }
 
         if (!Objects.isNull(sort)) {
             query.orderBy(cb.asc(root.get(sort)));
         }
 
+        if (!predicates.isEmpty()) {
+            query.where(predicates.toArray(new Predicate[0]));
+        }
         return query;
     }
 }
