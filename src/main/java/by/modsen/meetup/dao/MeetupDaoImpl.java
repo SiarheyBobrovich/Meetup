@@ -4,7 +4,6 @@ import by.modsen.meetup.dao.api.MeetupDao;
 import by.modsen.meetup.dao.mapper.api.ModelMapper;
 import by.modsen.meetup.entity.Meetup;
 import by.modsen.meetup.exceptions.MeetupOptimisticLockException;
-import org.springframework.stereotype.Repository;
 
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaQuery;
@@ -13,13 +12,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-@Repository
 public class MeetupDaoImpl implements MeetupDao {
 
-    private final EntityManagerFactory factory;
+    protected final EntityManagerFactory factory;
     private final ModelMapper<Meetup> mapper;
 
-    public MeetupDaoImpl(EntityManagerFactory factory, ModelMapper<Meetup> mapper) {
+    protected MeetupDaoImpl(EntityManagerFactory factory, ModelMapper<Meetup> mapper) {
         this.factory = factory;
         this.mapper = mapper;
     }
@@ -72,7 +70,7 @@ public class MeetupDaoImpl implements MeetupDao {
     @Override
     public void delete(Long id) {
         final EntityManager entityManager = beginTransaction();
-        final Meetup currentMeetup = tryToFind(id);
+        final Meetup currentMeetup = getById(id);
 
         if (!Objects.isNull(currentMeetup)) {
             entityManager.remove(currentMeetup);
@@ -81,15 +79,11 @@ public class MeetupDaoImpl implements MeetupDao {
         commitAndClose(entityManager);
     }
 
-    private Meetup tryToFind(Long id) {
-            return getById(id);
-    }
-
     /**
      * Create new EntityManager and start a resource transaction.
      * @return EntityManager with started transaction
      */
-    private EntityManager beginTransaction() {
+    protected EntityManager beginTransaction() {
         final EntityManager entityManager = factory.createEntityManager();
         entityManager.getTransaction().begin();
 
@@ -100,7 +94,7 @@ public class MeetupDaoImpl implements MeetupDao {
      * Commit started transaction and close EntityManager
      * @param manager current EntityManager
      */
-    private void commitAndClose(EntityManager manager) {
+    protected void commitAndClose(EntityManager manager) {
         final EntityTransaction transaction = manager.getTransaction();
 
         if (transaction.isActive()) {

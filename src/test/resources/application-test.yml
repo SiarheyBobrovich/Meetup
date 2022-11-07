@@ -7,7 +7,7 @@ spring:
         password: 172143
     hibernate:
         format_sql: true
-        show_sql: false
+        show_sql: true
         hbm2ddl:
             auto: create-drop
 server:

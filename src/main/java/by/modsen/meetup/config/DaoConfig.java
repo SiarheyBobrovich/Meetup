@@ -1,5 +1,9 @@
 package by.modsen.meetup.config;
 
+import by.modsen.meetup.dao.FilteredMeetupDaoImpl;
+import by.modsen.meetup.dao.api.MeetupDao;
+import by.modsen.meetup.dao.mapper.api.ModelMapper;
+import by.modsen.meetup.entity.Meetup;
 import by.modsen.meetup.exceptions.DriverRuntimeException;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.springframework.context.annotation.Bean;
@@ -10,6 +14,7 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.beans.PropertyVetoException;
 import java.util.Properties;
@@ -22,6 +27,11 @@ public class DaoConfig {
 
     public DaoConfig(Environment env) {
         this.env = env;
+    }
+
+    @Bean
+    public MeetupDao meetupDao(EntityManagerFactory entityManagerFactory, ModelMapper<Meetup> modelMapper) {
+        return new FilteredMeetupDaoImpl(entityManagerFactory, modelMapper);
     }
 
     @Bean
