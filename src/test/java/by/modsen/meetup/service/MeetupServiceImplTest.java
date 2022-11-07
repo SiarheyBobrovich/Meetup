@@ -2,9 +2,9 @@ package by.modsen.meetup.service;
 
 import by.modsen.config.ServiceTestConfig;
 import by.modsen.meetup.converters.MeetupDtoToMeetupConverter;
+import by.modsen.meetup.dao.api.FilteredMeetupDao;
 import by.modsen.meetup.utils.LocalDateTimeUtil;
 import by.modsen.meetup.MeetupApplication;
-import by.modsen.meetup.dao.api.MeetupDao;
 import by.modsen.meetup.dto.request.MeetupDto;
 import by.modsen.meetup.entity.Meetup;
 import by.modsen.meetup.exceptions.IllegalIdException;
@@ -20,7 +20,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import javax.validation.ValidationException;
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -37,14 +37,14 @@ class MeetupServiceImplTest {
     MeetupService meetupService;
 
     @Autowired
-    MeetupDao meetupDao;
+    FilteredMeetupDao meetupDao;
 
     @Test
     void getAll() {
         Meetup meetup = getMeetup();
-        Mockito.when(meetupDao.getAll()).thenReturn(Set.of(meetup));
+        Mockito.when(meetupDao.getAll(Mockito.any())).thenReturn(List.of(meetup));
 
-        Set<Meetup> meetups = meetupService.getAll();
+        List<Meetup> meetups = meetupService.getAll(null);
 
         assertNotNull(meetups);
         assertEquals(1, meetups.size());
@@ -65,7 +65,6 @@ class MeetupServiceImplTest {
     @ParameterizedTest
     @ValueSource(longs = {Long.MIN_VALUE, -1, 0})
     void getByIdFailed(Long id) {
-
         Mockito.when(meetupDao.getById(id)).thenReturn(null);
         assertThrows(IllegalIdException.class, () -> meetupService.getById(id));
     }

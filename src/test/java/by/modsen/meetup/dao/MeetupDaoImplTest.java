@@ -11,9 +11,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.orm.jpa.JpaOptimisticLockingFailureException;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
+import javax.persistence.OptimisticLockException;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class MeetupDaoImplTest {
 
@@ -144,7 +146,7 @@ class MeetupDaoImplTest {
         oldMeetup.setDtMeetup(dtMeetup);
         oldMeetup.setDtUpdate(LocalDateTimeUtil.truncatedToMillis(LocalDateTime.now()));
 
-        assertThrows(JpaOptimisticLockingFailureException.class,() -> dao.update(oldMeetup));
+        assertThrows(OptimisticLockException.class,() -> dao.update(oldMeetup));
     }
 
     @Order(8)

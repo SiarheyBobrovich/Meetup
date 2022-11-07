@@ -1,7 +1,7 @@
 package by.modsen.config;
 
-import by.modsen.meetup.dao.MeetupDaoImpl;
-import by.modsen.meetup.dao.api.MeetupDao;
+import by.modsen.meetup.dao.FilteredMeetupDaoImpl;
+import by.modsen.meetup.dao.api.FilteredMeetupDao;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +14,7 @@ public class ServiceTestConfig {
 
     @Bean
     @Primary
-    MeetupDao meetupDto() {
-        return Mockito.mock(MeetupDaoImpl.class);
+    FilteredMeetupDao meetupDto() {
+        return Mockito.mock(FilteredMeetupDaoImpl.class);
     }
 }

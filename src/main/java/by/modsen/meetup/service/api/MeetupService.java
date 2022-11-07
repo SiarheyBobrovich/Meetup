@@ -1,20 +1,21 @@
 package by.modsen.meetup.service.api;
 
+import by.modsen.meetup.dao.filter.api.Filter;
 import by.modsen.meetup.dto.request.MeetupDto;
-import by.modsen.meetup.entity.Meetup;;
+import by.modsen.meetup.entity.Meetup;
 
 import javax.persistence.OptimisticLockException;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 
 public interface MeetupService {
     /**
      * Get all meetups
      * @return All saved Set of meetups
      */
-    Set<Meetup> getAll();
+    List<Meetup> getAll(Filter filter);
 
     /**
      * Find a meetup by id

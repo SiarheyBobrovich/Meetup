@@ -1,6 +1,7 @@
 package by.modsen.meetup.service;
 
-import by.modsen.meetup.dao.api.MeetupDao;
+import by.modsen.meetup.dao.api.FilteredMeetupDao;
+import by.modsen.meetup.dao.filter.api.Filter;
 import by.modsen.meetup.dto.request.MeetupDto;
 import by.modsen.meetup.entity.Meetup;
 import by.modsen.meetup.exceptions.IllegalIdException;
@@ -11,24 +12,24 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.OptimisticLockException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 @Service
 @Validated
 public class MeetupServiceImpl implements MeetupService {
 
-    private final MeetupDao meetupDao;
+    private final FilteredMeetupDao meetupDao;
     private final ConversionService conversionService;
 
-    public MeetupServiceImpl(MeetupDao meetupDao, ConversionService conversionService) {
+    public MeetupServiceImpl(FilteredMeetupDao meetupDao, ConversionService conversionService) {
         this.meetupDao = meetupDao;
         this.conversionService = conversionService;
     }
 
     @Override
-    public Set<Meetup> getAll() {
-        return meetupDao.getAll();
+    public List<Meetup> getAll(Filter filter) {
+        return meetupDao.getAll(filter);
     }
 
     @Override
