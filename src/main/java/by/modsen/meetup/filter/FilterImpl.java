@@ -1,6 +1,6 @@
-package by.modsen.meetup.dao.filter;
+package by.modsen.meetup.filter;
 
-import by.modsen.meetup.dao.filter.api.Filter;
+import by.modsen.meetup.filter.api.Filter;
 
 import java.time.LocalDate;
 import java.util.Objects;

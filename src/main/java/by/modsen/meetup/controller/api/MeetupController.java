@@ -1,6 +1,6 @@
 package by.modsen.meetup.controller.api;
 
-import by.modsen.meetup.dao.filter.SortField;
+import by.modsen.meetup.filter.SortField;
 import by.modsen.meetup.dto.request.MeetupDto;
 import by.modsen.meetup.dto.response.ResponseMeetupDto;
 import org.springframework.http.HttpStatus;

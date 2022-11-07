@@ -1,4 +1,4 @@
-package by.modsen.meetup.dao.filter;
+package by.modsen.meetup.filter;
 
 public enum SortField {
     TOPIC("topic"),

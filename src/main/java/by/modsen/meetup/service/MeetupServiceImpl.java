@@ -1,7 +1,7 @@
 package by.modsen.meetup.service;
 
 import by.modsen.meetup.dao.api.FilteredMeetupDao;
-import by.modsen.meetup.dao.filter.api.Filter;
+import by.modsen.meetup.filter.api.Filter;
 import by.modsen.meetup.dto.request.MeetupDto;
 import by.modsen.meetup.entity.Meetup;
 import by.modsen.meetup.exceptions.IllegalIdException;

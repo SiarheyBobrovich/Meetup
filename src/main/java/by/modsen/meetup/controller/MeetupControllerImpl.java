@@ -1,9 +1,9 @@
 package by.modsen.meetup.controller;
 
 import by.modsen.meetup.controller.api.MeetupController;
-import by.modsen.meetup.dao.filter.FilterImpl;
-import by.modsen.meetup.dao.filter.SortField;
-import by.modsen.meetup.dao.filter.api.Filter;
+import by.modsen.meetup.filter.FilterImpl;
+import by.modsen.meetup.filter.SortField;
+import by.modsen.meetup.filter.api.Filter;
 import by.modsen.meetup.dto.request.MeetupDto;
 import by.modsen.meetup.dto.response.ResponseMeetupDto;
 import by.modsen.meetup.entity.Meetup;

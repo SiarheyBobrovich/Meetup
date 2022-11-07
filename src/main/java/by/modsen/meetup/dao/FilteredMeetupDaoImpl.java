@@ -1,7 +1,7 @@
 package by.modsen.meetup.dao;
 
 import by.modsen.meetup.dao.api.FilteredMeetupDao;
-import by.modsen.meetup.dao.filter.api.Filter;
+import by.modsen.meetup.filter.api.Filter;
 import by.modsen.meetup.dao.mapper.api.ModelMapper;
 import by.modsen.meetup.entity.Meetup;
 

@@ -1,9 +1,9 @@
 package by.modsen.meetup.dao;
 
 import by.modsen.meetup.dao.api.FilteredMeetupDao;
-import by.modsen.meetup.dao.filter.FilterImpl;
-import by.modsen.meetup.dao.filter.SortField;
-import by.modsen.meetup.dao.filter.api.Filter;
+import by.modsen.meetup.filter.FilterImpl;
+import by.modsen.meetup.filter.SortField;
+import by.modsen.meetup.filter.api.Filter;
 import by.modsen.meetup.entity.Meetup;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package by.modsen.meetup.dao.filter.api;
+package by.modsen.meetup.filter.api;
 
 import java.time.LocalDate;
 
