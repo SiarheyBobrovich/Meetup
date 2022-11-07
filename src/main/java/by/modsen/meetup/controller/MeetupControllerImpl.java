@@ -1,6 +1,9 @@
 package by.modsen.meetup.controller;
 
 import by.modsen.meetup.controller.api.MeetupController;
+import by.modsen.meetup.dao.filter.FilterImpl;
+import by.modsen.meetup.dao.filter.SortField;
+import by.modsen.meetup.dao.filter.api.Filter;
 import by.modsen.meetup.dto.request.MeetupDto;
 import by.modsen.meetup.dto.response.ResponseMeetupDto;
 import by.modsen.meetup.entity.Meetup;
@@ -10,8 +13,9 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
@@ -26,18 +30,24 @@ public class MeetupControllerImpl implements MeetupController {
     }
 
     @Override
-    public ResponseEntity<Set<ResponseMeetupDto>> getAllMeetups() {
-        final Set<Meetup> all = meetupService.getAll();
+    public ResponseEntity<List<ResponseMeetupDto>> getAllMeetups(String topic,
+                                                                 String organization,
+                                                                 String date,
+                                                                 SortField sort) {
+        final LocalDate filterDate = conversionService.convert(date, LocalDate.class);
+        final Filter filter = FilterImpl.of(topic, organization, filterDate, sort);
+
+        final List<Meetup> all = meetupService.getAll(filter);
 
         return ResponseEntity.ok()
                 .body(all.stream().map(meetup ->
                         conversionService.convert(meetup, ResponseMeetupDto.class)
-        ).collect(Collectors.toSet()));
+        ).collect(Collectors.toList()));
     }
 
     @Override
     public ResponseEntity<ResponseMeetupDto> getMeetupById(Long id) {
-        Meetup meetup = meetupService.getById(id);
+        final Meetup meetup = meetupService.getById(id);
         return ResponseEntity.ok()
                 .body(conversionService.convert(meetup, ResponseMeetupDto.class));
     }
@@ -49,7 +59,7 @@ public class MeetupControllerImpl implements MeetupController {
 
     @Override
     public void putMeetup(MeetupDto dto, Long id, Long version) {
-        LocalDateTime dtUpdate = LocalDateTimeUtil.convertMillisToLocalDateTime(version);
+        final LocalDateTime dtUpdate = LocalDateTimeUtil.convertMillisToLocalDateTime(version);
         meetupService.update(dto, id, dtUpdate);
     }
 

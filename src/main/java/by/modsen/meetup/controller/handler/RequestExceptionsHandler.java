@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.persistence.OptimisticLockException;
 import javax.validation.ValidationException;
+import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,5 +61,13 @@ public class RequestExceptionsHandler {
     public String handle(HttpMessageNotReadableException e) {
         return e.getMostSpecificCause().getMessage();
     }
+
+    @ExceptionHandler
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+    public String handle(DateTimeParseException e) {
+        LOGGER.info(e.getMessage());
+        return "date must be like: 2000-10-31";
+    }
+
 
 }

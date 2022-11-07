@@ -4,7 +4,7 @@ import by.modsen.config.ServiceTestConfig;
 import by.modsen.meetup.MeetupApplication;
 import by.modsen.meetup.controller.api.MeetupController;
 import by.modsen.meetup.converters.MeetupToResponseMeetupDtoConverter;
-import by.modsen.meetup.dao.api.MeetupDao;
+import by.modsen.meetup.dao.api.FilteredMeetupDao;
 import by.modsen.meetup.dto.request.MeetupDto;
 import by.modsen.meetup.dto.response.ResponseMeetupDto;
 import by.modsen.meetup.entity.Meetup;
@@ -19,7 +19,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class MeetupControllerImplTest {
 
     @Autowired
-    private MeetupDao meetupDao;
+    private FilteredMeetupDao meetupDao;
     @Autowired
     private MeetupController meetupController;
 
@@ -41,16 +41,16 @@ class MeetupControllerImplTest {
 
     @Test
     void getAllMeetups() {
-        Set<Meetup> meetups = getMeetups();
-        Mockito.when(meetupDao.getAll()).thenReturn(meetups);
-        ResponseEntity<Set<ResponseMeetupDto>> allMeetups = meetupController.getAllMeetups();
+        List<Meetup> meetups = getMeetups();
+        Mockito.when(meetupDao.getAll(Mockito.any())).thenReturn(meetups);
+        ResponseEntity<List<ResponseMeetupDto>> allMeetups = meetupController.getAllMeetups(null, null, null, null);
 
         assertEquals(HttpStatus.OK, allMeetups.getStatusCode());
 
-        Set<ResponseMeetupDto> expected = meetups.stream()
+        List<ResponseMeetupDto> expected = meetups.stream()
                 .map(meetup -> converter.convert(meetup))
-                .collect(Collectors.toSet());
-        Set<ResponseMeetupDto> actual = allMeetups.getBody();
+                .collect(Collectors.toList());
+        List<ResponseMeetupDto> actual = allMeetups.getBody();
 
         assertEquals(expected, actual);
     }
@@ -113,7 +113,7 @@ class MeetupControllerImplTest {
                 .build();
     }
 
-    private Set<Meetup> getMeetups() {
+    private List<Meetup> getMeetups() {
         Meetup meetup1 = new Meetup();
         Meetup meetup2 = new Meetup();
 
@@ -133,6 +133,6 @@ class MeetupControllerImplTest {
         meetup2.setDtMeetup(LocalDateTime.now());
         meetup2.setDtUpdate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS));
 
-        return Set.of(meetup1, meetup2);
+        return List.of(meetup1, meetup2);
     }
 }

@@ -1,19 +1,23 @@
 package by.modsen.meetup.controller.api;
 
+import by.modsen.meetup.dao.filter.SortField;
 import by.modsen.meetup.dto.request.MeetupDto;
 import by.modsen.meetup.dto.response.ResponseMeetupDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Set;
+import java.util.List;
 
 @RequestMapping("/api/v1/meetup")
 public interface MeetupController {
 
     @GetMapping("/all")
     @ResponseStatus(HttpStatus.OK)
-    ResponseEntity<Set<ResponseMeetupDto>> getAllMeetups();
+    ResponseEntity<List<ResponseMeetupDto>> getAllMeetups(@RequestParam(required = false) String topic,
+                                                          @RequestParam(required = false) String organization,
+                                                          @RequestParam(required = false) String date,
+                                                          @RequestParam(required = false) SortField sort);
 
     @GetMapping(value = "/id/{id}", produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
