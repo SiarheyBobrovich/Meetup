@@ -49,7 +49,7 @@
 - }
 ---
 ## Method: PUT
-#### /id/{id}/version/{dt_update}
+#### /api/v1/meetup/id/{id}/version/{dt_update}
 ##### PathVariable:
 1) dt_update - Long
 ##### RequestBody:
@@ -62,6 +62,6 @@
 - }
 ---
 ## Method: DELETE
-#### /delete/{id}
+#### /api/v1/meetup/delete/{id}
 ##### PathVariable:
 1) id - Long (1...Long.MAX_VALUE)
