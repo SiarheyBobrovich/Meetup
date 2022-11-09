@@ -82,6 +82,10 @@ public class Meetup implements Serializable {
         this.dtUpdate = dtUpdate;
     }
 
+    public boolean isEqualVersion(Meetup m) {
+        return this.dtUpdate.equals(m.dtUpdate);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
