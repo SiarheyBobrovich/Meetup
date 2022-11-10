@@ -1,17 +1,19 @@
 package by.modsen.meetup.controller;
 
 import by.modsen.config.ServiceTestConfig;
-import by.modsen.meetup.MeetupApplication;
 import by.modsen.meetup.controller.api.MeetupController;
 import by.modsen.meetup.converters.MeetupToResponseMeetupDtoConverter;
 import by.modsen.meetup.dao.api.FilteredMeetupDao;
 import by.modsen.meetup.dto.request.MeetupDto;
 import by.modsen.meetup.dto.response.ResponseMeetupDto;
 import by.modsen.meetup.entity.Meetup;
+import by.modsen.meetup.filter.api.Filter;
+import by.modsen.meetup.service.MeetupServiceImpl;
 import by.modsen.meetup.utils.LocalDateTimeUtil;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +27,11 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = {
+        ValidationAutoConfiguration.class,
+        MeetupServiceImpl.class,
         ServiceTestConfig.class,
-        MeetupApplication.class
+        MeetupControllerImpl.class,
+        MeetupToResponseMeetupDtoConverter.class
 })
 @ActiveProfiles("test")
 class MeetupControllerImplTest {
@@ -42,9 +47,9 @@ class MeetupControllerImplTest {
     @Test
     void getAllMeetups() {
         List<Meetup> meetups = getMeetups();
-        Mockito.when(meetupDao.getAll(Mockito.any())).thenReturn(meetups);
-        ResponseEntity<List<ResponseMeetupDto>> allMeetups = meetupController.getAllMeetups(null, null, null, null);
+        Mockito.when(meetupDao.getAll(Mockito.any(Filter.class))).thenReturn(meetups);
 
+        ResponseEntity<List<ResponseMeetupDto>> allMeetups = meetupController.getAllMeetups(null, null, null, null);
         assertEquals(HttpStatus.OK, allMeetups.getStatusCode());
 
         List<ResponseMeetupDto> expected = meetups.stream()
@@ -57,11 +62,12 @@ class MeetupControllerImplTest {
 
     @Test
     void getMeetupById() {
-        Meetup meetup = getSingleMeetup(2);
+        long id = 2L;
+        Meetup meetup = getSingleMeetup(id);
 
-        Mockito.when(meetupDao.getById(2L)).thenReturn(meetup);
+        Mockito.when(meetupDao.getById(id)).thenReturn(meetup);
 
-        ResponseEntity<ResponseMeetupDto> meetupById = meetupController.getMeetupById(2L);
+        ResponseEntity<ResponseMeetupDto> meetupById = meetupController.getMeetupById(id);
         assertEquals(HttpStatus.OK, meetupById.getStatusCode());
 
         ResponseMeetupDto expected = converter.convert(meetup);

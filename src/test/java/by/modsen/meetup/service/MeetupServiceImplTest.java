@@ -1,10 +1,8 @@
 package by.modsen.meetup.service;
 
 import by.modsen.config.ServiceTestConfig;
-import by.modsen.meetup.converters.MeetupDtoToMeetupConverter;
 import by.modsen.meetup.dao.api.FilteredMeetupDao;
 import by.modsen.meetup.utils.LocalDateTimeUtil;
-import by.modsen.meetup.MeetupApplication;
 import by.modsen.meetup.dto.request.MeetupDto;
 import by.modsen.meetup.entity.Meetup;
 import by.modsen.meetup.exceptions.IllegalIdException;
@@ -15,6 +13,7 @@ import org.junit.jupiter.params.provider.CsvFileSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -25,10 +24,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = {
+        ValidationAutoConfiguration.class,
         MeetupServiceImpl.class,
         ServiceTestConfig.class,
-        MeetupApplication.class,
-        MeetupDtoToMeetupConverter.class
 })
 @ActiveProfiles("test")
 class MeetupServiceImplTest {

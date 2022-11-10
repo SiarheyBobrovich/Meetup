@@ -1,5 +1,7 @@
 package by.modsen.meetup.dao;
 
+import by.modsen.meetup.config.DaoConfig;
+import by.modsen.meetup.dao.mapper.MeetupModelMapper;
 import by.modsen.meetup.utils.LocalDateTimeUtil;
 import by.modsen.meetup.dao.api.MeetupDao;
 import by.modsen.meetup.entity.Meetup;
@@ -20,7 +22,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+@SpringBootTest(classes = {DaoConfig.class, MeetupModelMapper.class})
 @ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)

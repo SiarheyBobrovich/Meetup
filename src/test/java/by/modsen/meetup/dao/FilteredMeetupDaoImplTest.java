@@ -1,6 +1,8 @@
 package by.modsen.meetup.dao;
 
+import by.modsen.meetup.config.DaoConfig;
 import by.modsen.meetup.dao.api.FilteredMeetupDao;
+import by.modsen.meetup.dao.mapper.MeetupModelMapper;
 import by.modsen.meetup.filter.FilterImpl;
 import by.modsen.meetup.filter.SortField;
 import by.modsen.meetup.filter.api.Filter;
@@ -22,7 +24,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+@SpringBootTest(classes = {DaoConfig.class, MeetupModelMapper.class })
 @ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
