@@ -1,0 +1,51 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: Bobrovich
+      changes:
+        - createSequence:
+            sequenceName: meetups_id_seq
+            startValue: 1
+            incrementBy: 1
+            minValue: 1
+            maxValue: 9223372036854775807
+            cacheSize: 1
+        - createTable:
+            tableName: meetups
+            tableSpace: pg_default;
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  defaultValue: nextval('meetups_id_seq')
+                  constraints:
+                    primaryKey:  true
+                    nullable:  false
+              - column:
+                  name: topic
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  name: organization
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: place
+                  type: VARCHAR(150)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: dt_meetup
+                  type: TIMESTAMP WITHOUT TIME ZONE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: dt_update
+                  type: TIMESTAMP(3) WITHOUT TIME ZONE
+                  constraints:
+                    nullable: false

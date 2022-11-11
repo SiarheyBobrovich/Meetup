@@ -1,4 +1,6 @@
 spring:
+    liquibase:
+        enabled: false
     datasource:
         driver-class-name: org.postgresql.Driver
         url: jdbc:postgresql://localhost:5432/test?currentSchema=${spring.datasource.schema}
@@ -6,8 +8,8 @@ spring:
         username: postgres
         password: 172143
     hibernate:
-        format_sql: true
-        show_sql: true
+        format_sql: false
+        show_sql: false
         hbm2ddl:
             auto: create-drop
 server:

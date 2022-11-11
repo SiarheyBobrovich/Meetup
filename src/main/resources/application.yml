@@ -1,4 +1,6 @@
 spring:
+    liquibase:
+        change-log: classpath:liquibase/changelog.yml
     profiles:
         active: @profileActive@
     datasource:
