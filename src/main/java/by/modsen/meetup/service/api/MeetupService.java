@@ -1,44 +1,46 @@
 package by.modsen.meetup.service.api;
 
 import by.modsen.meetup.filter.api.Filter;
-import by.modsen.meetup.dto.request.MeetupDto;
-import by.modsen.meetup.entity.Meetup;
 
 import javax.persistence.OptimisticLockException;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 import java.util.List;
 
-public interface MeetupService {
+/**
+ *
+ * @param <R> - response to
+ * @param <D> - request dto
+ */
+public interface MeetupService<R, D> {
     /**
-     * Get all meetups
-     * @return All saved Set of meetups
+     * Get all D
+     * @return All saved Set of D
      */
-    List<Meetup> getAll(Filter filter);
+    List<R> getAll(Filter filter);
 
     /**
-     * Find a meetup by id
-     * @param id meetup id
-     * @return If found -> meetup
+     * Find a D by id
+     * @param id D id
+     * @return If found -> D
      */
-    Meetup getById(@NotNull Long id);
+    R getById(@NotNull Long id);
 
     /**
-     * Create new meetup
+     * Create new D
      * @return id
      */
-    Long save(@Valid @NotNull MeetupDto meetup);
+    Long save(@Valid @NotNull D meetup);
 
     /**
-     * @param meetup updated meetup
-     * @param id meetup id
-     * @param dtUpdate meetup version
+     * @param meetup updated D
+     * @param id D id
+     * @param version D version
      * @throws OptimisticLockException if dtUpdate is not equals
      */
-    void update(@Valid @NotNull MeetupDto meetup,
+    void update(@Valid @NotNull D meetup,
                 @NotNull Long id,
-                @NotNull LocalDateTime dtUpdate) throws OptimisticLockException;
+                @NotNull Long version) throws OptimisticLockException;
 
     /**
      * Deleted R by id

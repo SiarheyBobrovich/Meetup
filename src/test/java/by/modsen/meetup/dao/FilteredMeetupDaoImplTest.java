@@ -2,7 +2,6 @@ package by.modsen.meetup.dao;
 
 import by.modsen.meetup.config.DaoConfig;
 import by.modsen.meetup.dao.api.FilteredMeetupDao;
-import by.modsen.meetup.dao.mapper.MeetupModelMapper;
 import by.modsen.meetup.filter.FilterImpl;
 import by.modsen.meetup.filter.SortField;
 import by.modsen.meetup.filter.api.Filter;
@@ -24,14 +23,14 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(classes = {DaoConfig.class, MeetupModelMapper.class })
+@SpringBootTest(classes = {DaoConfig.class})
 @ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class FilteredMeetupDaoImplTest {
 
     @Autowired
-    private FilteredMeetupDao meetupDao;
+    private FilteredMeetupDao<Meetup> meetupDao;
 
     @Test
     @Order(1)
@@ -45,8 +44,6 @@ class FilteredMeetupDaoImplTest {
         });
 
         meetups.forEach(assertDoesNotThrow(() -> meetupDao::save));
-
-
     }
 
     @Test
@@ -76,7 +73,7 @@ class FilteredMeetupDaoImplTest {
 
     @Test
     void getFilteredMeetupsDtMeetup() {
-        Filter f = FilterImpl.of(null, null, LocalDate.ofEpochDay(3333), null);
+        Filter f = FilterImpl.of(null, null, LocalDate.ofEpochDay(3333).toString(), null);
 
         List<Meetup> filteredMeetups = meetupDao.getAll(f);
         assertEquals(1, filteredMeetups.size());

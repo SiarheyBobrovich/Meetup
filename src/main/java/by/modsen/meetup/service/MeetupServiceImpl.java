@@ -1,57 +1,62 @@
 package by.modsen.meetup.service;
 
 import by.modsen.meetup.dao.api.FilteredMeetupDao;
+import by.modsen.meetup.dto.response.ResponseMeetupDto;
+import by.modsen.meetup.exceptions.MeetupOptimisticLockException;
 import by.modsen.meetup.filter.api.Filter;
 import by.modsen.meetup.dto.request.MeetupDto;
 import by.modsen.meetup.entity.Meetup;
-import by.modsen.meetup.exceptions.IllegalIdException;
 import by.modsen.meetup.service.api.MeetupService;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.OptimisticLockException;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @Validated
-public class MeetupServiceImpl implements MeetupService {
+public class MeetupServiceImpl implements MeetupService<ResponseMeetupDto, MeetupDto> {
 
-    private final FilteredMeetupDao meetupDao;
+    private final FilteredMeetupDao<Meetup> meetupDao;
     private final ConversionService conversionService;
 
-    public MeetupServiceImpl(FilteredMeetupDao meetupDao, ConversionService conversionService) {
+    public MeetupServiceImpl(FilteredMeetupDao<Meetup> meetupDao, ConversionService conversionService) {
         this.meetupDao = meetupDao;
         this.conversionService = conversionService;
     }
 
     @Override
-    public List<Meetup> getAll(Filter filter) {
-        return meetupDao.getAll(filter);
+    public List<ResponseMeetupDto> getAll(Filter filter) {
+        return meetupDao.getAll(filter)
+                .stream()
+                .map(meetup -> conversionService.convert(meetup, ResponseMeetupDto.class))
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Meetup getById(Long id) {
-        checkId(id);
-        return meetupDao.getById(id);
+    public ResponseMeetupDto getById(Long id) {
+        return conversionService.convert(meetupDao.getById(id), ResponseMeetupDto.class);
     }
 
     @Override
     public Long save(MeetupDto meetup) {
-        Meetup newMeetup = conversionService.convert(meetup, Meetup.class);
+        final Meetup newMeetup = conversionService.convert(meetup, Meetup.class);
         return meetupDao.save(newMeetup);
     }
 
     @Override
-    public void update(MeetupDto meetup, Long id, LocalDateTime dtUpdate) throws OptimisticLockException {
-        checkId(id);
-
-        Meetup updatedMeetup = conversionService.convert(meetup, Meetup.class);
-
+    public void update(MeetupDto meetup, Long id, Long version) throws OptimisticLockException {
+        final Meetup currentMeetup = meetupDao.getById(id);
+        final Meetup updatedMeetup = conversionService.convert(meetup, Meetup.class);
         assert updatedMeetup != null;
-        updatedMeetup.setDtUpdate(dtUpdate);
+
+        if (currentMeetup == null || currentMeetup.getVersion() != version) {
+            throw new MeetupOptimisticLockException("Old version");
+        }
+
+        updatedMeetup.setVersion(version);
         updatedMeetup.setId(id);
 
         meetupDao.update(updatedMeetup);
@@ -59,13 +64,6 @@ public class MeetupServiceImpl implements MeetupService {
 
     @Override
     public void delete(Long id) {
-        checkId(id);
         meetupDao.delete(id);
-    }
-
-    private void checkId(Long id) {
-        if (Objects.isNull(id) || id < 1) {
-            throw new IllegalIdException(id);
-        }
     }
 }

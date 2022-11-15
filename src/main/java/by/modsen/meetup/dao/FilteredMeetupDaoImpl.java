@@ -2,7 +2,6 @@ package by.modsen.meetup.dao;
 
 import by.modsen.meetup.dao.api.FilteredMeetupDao;
 import by.modsen.meetup.filter.api.Filter;
-import by.modsen.meetup.dao.mapper.api.ModelMapper;
 import by.modsen.meetup.entity.Meetup;
 
 import javax.persistence.EntityManager;
@@ -18,10 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class FilteredMeetupDaoImpl extends MeetupDaoImpl implements FilteredMeetupDao {
+public class FilteredMeetupDaoImpl extends MeetupDaoImpl implements FilteredMeetupDao<Meetup> {
 
-    public FilteredMeetupDaoImpl(EntityManagerFactory factory, ModelMapper<Meetup> mapper) {
-        super(factory, mapper);
+    public FilteredMeetupDaoImpl(EntityManagerFactory factory) {
+        super(factory);
     }
 
     @Override

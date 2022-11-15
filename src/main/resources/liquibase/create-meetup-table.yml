@@ -45,7 +45,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: dt_update
-                  type: TIMESTAMP(3) WITHOUT TIME ZONE
+                  name: version
+                  type: BIGINT
                   constraints:
                     nullable: false

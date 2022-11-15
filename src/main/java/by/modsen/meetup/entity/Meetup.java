@@ -12,10 +12,10 @@ public class Meetup implements Serializable {
     private long id;
     private String topic;
     private String description;
-    private String  organization;
+    private String organization;
     private String place;
     private LocalDateTime dtMeetup;
-    private LocalDateTime dtUpdate;
+    private long version;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -73,17 +73,17 @@ public class Meetup implements Serializable {
     }
 
     @Version
-    @Column(name = "dt_update", nullable = false, columnDefinition = "timestamp(3) without time zone")
-    public LocalDateTime getDtUpdate() {
-        return dtUpdate;
+    @Column(name = "version", nullable = false)
+    public long getVersion() {
+        return version;
     }
 
-    public void setDtUpdate(LocalDateTime dtUpdate) {
-        this.dtUpdate = dtUpdate;
+    public void setVersion(long version) {
+        this.version = version;
     }
 
     public boolean isEqualVersion(Meetup m) {
-        return this.dtUpdate.equals(m.dtUpdate);
+        return this.version == m.version;
     }
 
     @Override
@@ -91,12 +91,7 @@ public class Meetup implements Serializable {
         if (this == o) return true;
         if (!(o instanceof Meetup)) return false;
         Meetup meetup = (Meetup) o;
-        return id == meetup.id &&
-                Objects.equals(topic, meetup.topic) &&
-                Objects.equals(description, meetup.description) &&
-                Objects.equals(organization, meetup.organization) &&
-                Objects.equals(place, meetup.place) &&
-                Objects.equals(dtMeetup, meetup.dtMeetup);
+        return id == meetup.id && version == meetup.version && Objects.equals(topic, meetup.topic) && Objects.equals(description, meetup.description) && Objects.equals(organization, meetup.organization) && Objects.equals(place, meetup.place) && Objects.equals(dtMeetup, meetup.dtMeetup);
     }
 
     @Override
@@ -113,7 +108,7 @@ public class Meetup implements Serializable {
                 ", organization='" + organization + '\'' +
                 ", place='" + place + '\'' +
                 ", dtMeetup=" + dtMeetup +
-                ", dtUpdate=" + dtUpdate +
+                ", version=" + version +
                 '}';
     }
 }

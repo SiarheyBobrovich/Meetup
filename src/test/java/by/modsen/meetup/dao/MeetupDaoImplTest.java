@@ -1,8 +1,6 @@
 package by.modsen.meetup.dao;
 
 import by.modsen.meetup.config.DaoConfig;
-import by.modsen.meetup.dao.mapper.MeetupModelMapper;
-import by.modsen.meetup.utils.LocalDateTimeUtil;
 import by.modsen.meetup.dao.api.MeetupDao;
 import by.modsen.meetup.entity.Meetup;
 import org.junit.jupiter.api.MethodOrderer;
@@ -16,20 +14,20 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import javax.persistence.OptimisticLockException;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(classes = {DaoConfig.class, MeetupModelMapper.class})
+@SpringBootTest(classes = DaoConfig.class)
 @ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class MeetupDaoImplTest {
 
     @Autowired
-    private MeetupDao dao;
+    private MeetupDao<Meetup> dao;
 
     @Test
     @Order(1)
@@ -107,7 +105,7 @@ class MeetupDaoImplTest {
     @Test
     @Order(5)
     void update() {
-        LocalDateTime dtMeetup = LocalDateTimeUtil.truncatedToMillis(LocalDateTime.now());
+        LocalDateTime dtMeetup = LocalDateTime.now();
 
         Meetup oldMeetup = dao.getById(1L);
         oldMeetup.setTopic("Updated title");
@@ -119,7 +117,14 @@ class MeetupDaoImplTest {
         dao.update(oldMeetup);
         Meetup updatedMeetup = dao.getById(1L);
 
-        assertEquals(oldMeetup, updatedMeetup);
+        assertEquals(oldMeetup.getId(), updatedMeetup.getId());
+        assertEquals(oldMeetup.getTopic(), updatedMeetup.getTopic());
+        assertEquals(oldMeetup.getDescription(), updatedMeetup.getDescription());
+        assertEquals(oldMeetup.getPlace(), updatedMeetup.getPlace());
+        assertEquals(
+                oldMeetup.getDtMeetup().truncatedTo(ChronoUnit.SECONDS),
+                updatedMeetup.getDtMeetup().truncatedTo(ChronoUnit.SECONDS)
+        );
     }
 
     @Test
@@ -133,22 +138,6 @@ class MeetupDaoImplTest {
         assertEquals("Updated organization", meetup.getOrganization());
         assertEquals("Updated place", meetup.getPlace());
         assertNotNull(meetup.getDtMeetup());
-    }
-
-    @Test
-    @Order(7)
-    void updateFailed() {
-        LocalDateTime dtMeetup = LocalDateTimeUtil.truncatedToMillis(LocalDateTime.now());
-
-        Meetup oldMeetup = dao.getById(1L);
-        oldMeetup.setTopic("Updated title 2");
-        oldMeetup.setPlace("Updated place 2");
-        oldMeetup.setOrganization("Updated organization 2");
-        oldMeetup.setDescription("Updated description 2");
-        oldMeetup.setDtMeetup(dtMeetup);
-        oldMeetup.setDtUpdate(LocalDateTimeUtil.truncatedToMillis(LocalDateTime.now()));
-
-        assertThrows(OptimisticLockException.class,() -> dao.update(oldMeetup));
     }
 
     @Order(8)

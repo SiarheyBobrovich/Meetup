@@ -1,11 +1,12 @@
 package by.modsen.meetup.service;
 
 import by.modsen.config.ServiceTestConfig;
+import by.modsen.meetup.converters.MeetupToResponseMeetupDtoConverter;
 import by.modsen.meetup.dao.api.FilteredMeetupDao;
-import by.modsen.meetup.utils.LocalDateTimeUtil;
 import by.modsen.meetup.dto.request.MeetupDto;
+import by.modsen.meetup.dto.response.ResponseMeetupDto;
 import by.modsen.meetup.entity.Meetup;
-import by.modsen.meetup.exceptions.IllegalIdException;
+import by.modsen.meetup.exceptions.MeetupOptimisticLockException;
 import by.modsen.meetup.service.api.MeetupService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -15,6 +16,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.test.context.ActiveProfiles;
 
 import javax.validation.ValidationException;
@@ -27,22 +29,26 @@ import static org.junit.jupiter.api.Assertions.*;
         ValidationAutoConfiguration.class,
         MeetupServiceImpl.class,
         ServiceTestConfig.class,
+        MeetupToResponseMeetupDtoConverter.class
 })
 @ActiveProfiles("test")
 class MeetupServiceImplTest {
 
     @Autowired
-    MeetupService meetupService;
+    MeetupService<ResponseMeetupDto, MeetupDto> meetupService;
 
     @Autowired
-    FilteredMeetupDao meetupDao;
+    FilteredMeetupDao<Meetup> meetupDao;
+
+    @Autowired
+    ConversionService conversionService;
 
     @Test
     void getAll() {
         Meetup meetup = getMeetup();
         Mockito.when(meetupDao.getAll(Mockito.any())).thenReturn(List.of(meetup));
 
-        List<Meetup> meetups = meetupService.getAll(null);
+        List<ResponseMeetupDto> meetups = meetupService.getAll(null);
 
         assertNotNull(meetups);
         assertEquals(1, meetups.size());
@@ -56,15 +62,10 @@ class MeetupServiceImplTest {
 
         Mockito.when(meetupDao.getById(1L)).thenReturn(meetup);
 
-        Meetup currentMeetup = meetupService.getById(1L);
-        assertEquals(meetup, currentMeetup);
-    }
+        ResponseMeetupDto currentMeetup = meetupService.getById(1L);
+        ResponseMeetupDto expected = conversionService.convert(meetup, ResponseMeetupDto.class);
 
-    @ParameterizedTest
-    @ValueSource(longs = {Long.MIN_VALUE, -1, 0})
-    void getByIdFailed(Long id) {
-        Mockito.when(meetupDao.getById(id)).thenReturn(null);
-        assertThrows(IllegalIdException.class, () -> meetupService.getById(id));
+        assertEquals(expected, currentMeetup);
     }
 
     @Test
@@ -78,8 +79,7 @@ class MeetupServiceImplTest {
     void save(String title, String description, String organization, String place) {
         Mockito.when(meetupDao.save(Mockito.any())).thenReturn(1L);
 
-        LocalDateTime time = LocalDateTimeUtil.truncatedToMillis(LocalDateTime.now());
-        MeetupDto meetupDto = new MeetupDto(title, description, organization, place, time);
+        MeetupDto meetupDto = new MeetupDto(title, description, organization, place, LocalDateTime.now());
 
         Long id = meetupService.save(meetupDto);
 
@@ -91,8 +91,7 @@ class MeetupServiceImplTest {
     void saveFail(String title, String description, String organization, String place) {
         Mockito.when(meetupDao.save(Mockito.any())).thenReturn(0L);
 
-        LocalDateTime time = LocalDateTimeUtil.truncatedToMillis(LocalDateTime.now());
-        MeetupDto meetupDto = new MeetupDto(title, description, organization, place, time);
+        MeetupDto meetupDto = new MeetupDto(title, description, organization, place, LocalDateTime.now());
 
         assertThrows(ValidationException.class, () -> meetupService.save(meetupDto));
     }
@@ -116,20 +115,41 @@ class MeetupServiceImplTest {
     @ParameterizedTest
     @CsvFileSource(resources = "/meetups.csv", delimiter = ';')
     void update(String title, String description, String organization, String place) {
+        long version = 123456;
+        long id = 1;
+
+        Meetup newMeetup = getNewMeetup(id, title, description, organization, place, version);
+
         Mockito.doNothing().when(meetupDao).update(Mockito.any());
+        Mockito.doReturn(newMeetup).when(meetupDao).getById(Mockito.any());
 
-        LocalDateTime time = LocalDateTimeUtil.truncatedToMillis(LocalDateTime.now());
-        MeetupDto meetupDto = new MeetupDto(title, description, organization, place, time);
+        MeetupDto meetupDto = new MeetupDto(title, description, organization, place, LocalDateTime.now());
 
-        assertDoesNotThrow(() -> meetupService.update(meetupDto, 1L, LocalDateTime.now()));
+        assertDoesNotThrow(() -> meetupService.update(meetupDto, id, version));
+    }
+
+    @ParameterizedTest
+    @CsvFileSource(resources = "/meetups.csv", delimiter = ';')
+    void updateFailByOptimisticLock(String title, String description, String organization, String place) {
+        long id = 1;
+        long version = 123456;
+        long oldVersion = 123455;
+
+        Meetup newMeetup = getNewMeetup(id, title, description, organization, place, version);
+
+        Mockito.doNothing().when(meetupDao).update(Mockito.any());
+        Mockito.doReturn(newMeetup).when(meetupDao).getById(Mockito.any());
+
+        MeetupDto meetupDto = new MeetupDto(title, description, organization, place, LocalDateTime.now());
+
+        assertThrows(MeetupOptimisticLockException.class, () -> meetupService.update(meetupDto, id, oldVersion));
     }
 
     @Test
     void updateFailedByNull() {
         Mockito.doNothing().when(meetupDao).update(Mockito.any());
-        LocalDateTime time = LocalDateTime.now();
 
-        assertThrows(ValidationException.class, () -> meetupService.update(null, 1L, time));
+        assertThrows(ValidationException.class, () -> meetupService.update(null, 1L, 1111L));
     }
 
     @ParameterizedTest
@@ -137,23 +157,9 @@ class MeetupServiceImplTest {
     void updateFailed(String title, String description, String organization, String place) {
         Mockito.doNothing().when(meetupDao).update(Mockito.any());
 
-        LocalDateTime time = LocalDateTimeUtil.truncatedToMillis(LocalDateTime.now());
-        MeetupDto meetupDto = new MeetupDto(title, description, organization, place, time);
-        LocalDateTime dtUpdate = LocalDateTime.now();
+        MeetupDto meetupDto = new MeetupDto(title, description, organization, place, LocalDateTime.now());
 
-        assertThrows(ValidationException.class, () -> meetupService.update(meetupDto, 1L, dtUpdate));
-    }
-
-    @ParameterizedTest
-    @CsvFileSource(resources = "/meetups_failed_by_id.csv", delimiter = ';')
-    void updateFailedById(String title, String description, String organization, String place, Long id) {
-        Mockito.doNothing().when(meetupDao).update(Mockito.any());
-
-        LocalDateTime time = LocalDateTimeUtil.truncatedToMillis(LocalDateTime.now());
-        MeetupDto meetupDto = new MeetupDto(title, description, organization, place, time);
-        LocalDateTime dtUpdate = LocalDateTime.now();
-
-        assertThrows(IllegalIdException.class, () -> meetupService.update(meetupDto, id, dtUpdate));
+        assertThrows(ValidationException.class, () -> meetupService.update(meetupDto, 1L, 1111L));
     }
 
     @ParameterizedTest
@@ -161,13 +167,6 @@ class MeetupServiceImplTest {
     void delete(Long id) {
         Mockito.doNothing().when(meetupDao).delete(id);
         assertDoesNotThrow(() -> meetupService.delete(id));
-    }
-
-    @ParameterizedTest
-    @ValueSource(longs = {Long.MIN_VALUE, -1892347178246L, 0})
-    void deleteFailedById(Long id) {
-        Mockito.doNothing().when(meetupDao).delete(id);
-        assertThrows(IllegalIdException.class, () -> meetupService.delete(id));
     }
 
     @Test
@@ -184,6 +183,19 @@ class MeetupServiceImplTest {
         meetup.setOrganization("organization");
         meetup.setPlace("place");
         meetup.setDtMeetup(LocalDateTime.now());
+
+        return meetup;
+    }
+
+    private Meetup getNewMeetup(Long id, String title, String description, String organization, String place, Long version) {
+        Meetup meetup = new Meetup();
+
+        meetup.setId(id);
+        meetup.setTopic(title);
+        meetup.setDescription(description);
+        meetup.setOrganization(organization);
+        meetup.setPlace(place);
+        meetup.setVersion(version);
 
         return meetup;
     }

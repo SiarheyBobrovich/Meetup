@@ -9,7 +9,6 @@ import by.modsen.meetup.dto.response.ResponseMeetupDto;
 import by.modsen.meetup.entity.Meetup;
 import by.modsen.meetup.filter.api.Filter;
 import by.modsen.meetup.service.MeetupServiceImpl;
-import by.modsen.meetup.utils.LocalDateTimeUtil;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class MeetupControllerImplTest {
 
     @Autowired
-    private FilteredMeetupDao meetupDao;
+    private FilteredMeetupDao<Meetup> meetupDao;
     @Autowired
     private MeetupController meetupController;
 
@@ -90,9 +88,9 @@ class MeetupControllerImplTest {
         Meetup meetup = getSingleMeetup(2);
         Mockito.doThrow(RuntimeException.class).when(meetupDao).update(meetup);
         MeetupDto requestDto = getRequestDto(meetup);
-        long dtUpdate = LocalDateTimeUtil.convertLocalDateTimeToMillis(LocalDateTimeUtil.truncatedToMillis(LocalDateTime.now()));
+        long version = 123456;
 
-        assertThrows(RuntimeException.class, () -> meetupController.putMeetup(requestDto, 2L, dtUpdate));
+        assertThrows(RuntimeException.class, () -> meetupController.putMeetup(requestDto, 2L, version));
     }
 
     @Test
@@ -129,7 +127,7 @@ class MeetupControllerImplTest {
         meetup1.setOrganization("F");
         meetup1.setPlace("First hotel");
         meetup1.setDtMeetup(LocalDateTime.now());
-        meetup1.setDtUpdate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS));
+        meetup1.setVersion(11111);
 
         meetup2.setId(2);
         meetup2.setTopic("Second");
@@ -137,7 +135,7 @@ class MeetupControllerImplTest {
         meetup2.setOrganization("S");
         meetup2.setPlace("Second hotel");
         meetup2.setDtMeetup(LocalDateTime.now());
-        meetup2.setDtUpdate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS));
+        meetup2.setVersion(22222);
 
         return List.of(meetup1, meetup2);
     }

@@ -39,7 +39,12 @@ public class FilterImpl implements Filter {
         return Objects.isNull(sort) ? null : sort.getFieldName();
     }
 
-    public static Filter of(String topic, String organization, LocalDate date, SortField sort) {
-        return new FilterImpl(topic, organization, date, sort);
+    public static Filter of(String topic, String organization, String date, SortField sort) {
+        return new FilterImpl(
+                topic,
+                organization,
+                date == null ? null : LocalDate.parse(date),
+                sort
+        );
     }
 }

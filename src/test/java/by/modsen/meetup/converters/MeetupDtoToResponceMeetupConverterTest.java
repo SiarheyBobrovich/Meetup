@@ -37,12 +37,12 @@ class MeetupDtoToResponceMeetupConverterTest {
         );
 
         assertNotNull(meetup);
-        assertNull(meetup.getDtUpdate());
         assertEquals(0, meetup.getId());
         assertEquals(title, meetup.getTopic());
         assertEquals(description, meetup.getDescription());
         assertEquals(organization, meetup.getOrganization());
         assertEquals(place, meetup.getPlace());
         assertEquals(dtMeetup, meetup.getDtMeetup());
+        assertEquals(0, meetup.getVersion());
     }
 }

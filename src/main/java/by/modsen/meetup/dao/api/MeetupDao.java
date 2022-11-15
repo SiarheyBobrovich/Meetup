@@ -1,41 +1,38 @@
 package by.modsen.meetup.dao.api;
 
-import by.modsen.meetup.entity.Meetup;
-
 import javax.persistence.OptimisticLockException;
 import java.util.Set;
 
-public interface MeetupDao {
+public interface MeetupDao<T> {
 
     /**
-     * Get all meetups
-     * @return All saved meetups
+     * Get all T
+     * @return All saved T
      */
-    Set<Meetup> getAll();
+    Set<T> getAll();
 
     /**
-     * Find meetup by id
-     * @param id Meetup's id
-     * @return If found -> Meetup
+     * Find T by id
+     * @param id T's id
+     * @return If found -> T
      */
-    Meetup getById(Long id);
+    T getById(Long id);
 
     /**
-     * Create new meetup
+     * Create new T
      * @return id
      */
-    Long save(Meetup meetup);
+    Long save(T t);
 
-    /**
-     *
-     * @param meetup updated meetup
-     * @throws OptimisticLockException if dtUpdate is not equals
+    /**     *
+     * @param t updated T
+     * @throws OptimisticLockException if versions is not equals
      */
-    void update(Meetup meetup) throws OptimisticLockException;
+    void update(T t) throws OptimisticLockException;
 
     /**
-     * Deleted meetup by id
-     * @param id meetup's id
+     * Deleted T by id
+     * @param id T's id
      */
     void delete(Long id);
 }

@@ -1,24 +1,19 @@
 package by.modsen.meetup.dao;
 
 import by.modsen.meetup.dao.api.MeetupDao;
-import by.modsen.meetup.dao.mapper.api.ModelMapper;
 import by.modsen.meetup.entity.Meetup;
-import by.modsen.meetup.exceptions.MeetupOptimisticLockException;
 
 import javax.persistence.*;
 import javax.persistence.criteria.*;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class MeetupDaoImpl implements MeetupDao {
+public class MeetupDaoImpl implements MeetupDao<Meetup> {
 
     protected final EntityManagerFactory factory;
-    private final ModelMapper<Meetup> mapper;
 
-    protected MeetupDaoImpl(EntityManagerFactory factory, ModelMapper<Meetup> mapper) {
+    protected MeetupDaoImpl(EntityManagerFactory factory) {
         this.factory = factory;
-        this.mapper = mapper;
     }
 
     @Override
@@ -53,16 +48,15 @@ public class MeetupDaoImpl implements MeetupDao {
 
     @Override
     public void update(Meetup meetup) {
+        CriteriaUpdate<Meetup> updateQuery = getUpdateQuery(meetup);
         final EntityManager entityManager = beginTransaction();
-        final Meetup currentMeetup = entityManager.find(Meetup.class, meetup.getId());
 
-        if (isInvalidForUpdate(currentMeetup, meetup)) {
-            commitAndClose(entityManager);
-            throw new MeetupOptimisticLockException("old version");
-        }
-
-        mapper.rebase(currentMeetup, meetup);
+        int i = entityManager.createQuery(updateQuery).executeUpdate();
         commitAndClose(entityManager);
+
+        if (i < 0) {
+            throw new OptimisticLockException();
+        }
     }
 
     @Override
@@ -75,6 +69,23 @@ public class MeetupDaoImpl implements MeetupDao {
         final EntityManager entityManager = beginTransaction();
         entityManager.createQuery(delete).executeUpdate();
         commitAndClose(entityManager);
+    }
+
+    protected CriteriaUpdate<Meetup> getUpdateQuery(Meetup meetup) {
+        final CriteriaBuilder criteriaBuilder = factory.getCriteriaBuilder();
+        final CriteriaUpdate<Meetup> criteriaUpdate = criteriaBuilder.createCriteriaUpdate(Meetup.class);
+        final Root<Meetup> root = criteriaUpdate.from(Meetup.class);
+
+        criteriaUpdate.set(root.get("topic"), meetup.getTopic())
+                .set(root.get("description"), meetup.getDescription())
+                .set(root.get("organization"), meetup.getOrganization())
+                .set(root.get("place"), meetup.getPlace())
+                .set(root.get("dtMeetup"), meetup.getDtMeetup())
+                .set(root.get("version"), meetup.getVersion() + 1)
+                .where(criteriaBuilder.equal(root.get("id"), meetup.getId()),
+                        criteriaBuilder.equal(root.get("version"), meetup.getVersion()));
+
+        return criteriaUpdate;
     }
 
     /**
@@ -100,15 +111,6 @@ public class MeetupDaoImpl implements MeetupDao {
         }
 
         manager.close();
-    }
-
-    /**
-     * Check version of meetups
-     * @param m1 current Meetup
-     * @param m2 updated Meetup
-     */
-    private boolean isInvalidForUpdate(final Meetup m1, final Meetup m2) {
-        return Objects.isNull(m1) || Objects.isNull(m2) || !m1.isEqualVersion(m2);
     }
 
     /**

@@ -2,7 +2,6 @@ package by.modsen.meetup.config;
 
 import by.modsen.meetup.dao.FilteredMeetupDaoImpl;
 import by.modsen.meetup.dao.api.FilteredMeetupDao;
-import by.modsen.meetup.dao.mapper.api.ModelMapper;
 import by.modsen.meetup.entity.Meetup;
 import by.modsen.meetup.exceptions.DriverRuntimeException;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
@@ -30,8 +29,8 @@ public class DaoConfig {
     }
 
     @Bean
-    public FilteredMeetupDao meetupDao(EntityManagerFactory entityManagerFactory, ModelMapper<Meetup> modelMapper) {
-        return new FilteredMeetupDaoImpl(entityManagerFactory, modelMapper);
+    public FilteredMeetupDao<Meetup> meetupDao(EntityManagerFactory entityManagerFactory) {
+        return new FilteredMeetupDaoImpl(entityManagerFactory);
     }
 
     @Bean
